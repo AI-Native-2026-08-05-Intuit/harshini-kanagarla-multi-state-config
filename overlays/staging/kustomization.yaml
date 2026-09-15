@@ -9,6 +9,14 @@ resources:
 
 patches:
   - target:
+      kind: Namespace
+      name: multistate-dev
+    patch: |-
+      - op: add
+        path: /metadata/annotations
+        value:
+          argocd.argoproj.io/sync-wave: "-1"
+  - target:
       kind: Deployment
       name: multistate-api
     patch: |-
@@ -22,3 +30,6 @@ patches:
       - op: replace
         path: /data/SPRING_PROFILES_ACTIVE
         value: k8s,staging
+      - op: replace
+        path: /data/LOGGING_LEVEL_ROOT
+        value: INFO

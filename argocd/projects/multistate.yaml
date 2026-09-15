@@ -1,6 +1,9 @@
 # argocd/projects/multistate.yaml - AppProject scoping the multistate team.
-# Task 1 keeps this narrow (dev only); Task 2 expands sourceRepos/
-# destinations/RBAC for staging + prod.
+#
+# Least-privilege by construction, not by convention: a wildcard anywhere
+# in sourceRepos/destinations is indistinguishable from leaving Applications
+# in the `default` project (which has none of these restrictions), so none
+# of the allow-lists below use '*'.
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
@@ -8,11 +11,105 @@ metadata:
   namespace: argocd
 spec:
   description: multistate-api GitOps project
+
+  # Exactly this repo - no wildcard. An Application whose source.repoURL
+  # doesn't match this list is rejected at admission, regardless of what
+  # RBAC would otherwise allow.
   sourceRepos:
     - https://github.com/AI-Native-2026-08-05-Intuit/harshini-kanagarla-multi-state-config.git
+
+  # Exactly the three environment namespaces on the in-cluster server -
+  # never {server: '*', namespace: '*'}. An Application targeting any
+  # other namespace (e.g. kube-system) is rejected the same way.
   destinations:
-    - namespace: multistate-dev
-      server: https://kubernetes.default.svc
-  clusterResourceWhitelist:
+    - server: https://kubernetes.default.svc
+      namespace: multistate-dev
+    - server: https://kubernetes.default.svc
+      namespace: multistate-staging
+    - server: https://kubernetes.default.svc
+      namespace: multistate-prod
+
+  # Empty = full deny. The app team has no business creating cluster-
+  # scoped resources (ClusterRoles, CRDs, PersistentVolumes) - those are
+  # platform-team owned, provisioned outside this project entirely.
+  clusterResourceWhitelist: []
+
+  # Enumerated to exactly the kinds the W5D3 manifests (base/) use. Any
+  # namespaced kind not listed here is rejected on sync, same as an
+  # unlisted cluster-scoped kind would be.
+  namespaceResourceWhitelist:
     - group: ""
       kind: Namespace
+    - group: ""
+      kind: Service
+    - group: ""
+      kind: ConfigMap
+    - group: ""
+      kind: Secret
+    - group: ""
+      kind: ServiceAccount
+    - group: apps
+      kind: Deployment
+    - group: autoscaling
+      kind: HorizontalPodAutoscaler
+    - group: policy
+      kind: PodDisruptionBudget
+    - group: networking.k8s.io
+      kind: NetworkPolicy
+    - group: monitoring.coreos.com
+      kind: ServiceMonitor
+    - group: monitoring.coreos.com
+      kind: PrometheusRule
+
+  # ResourceQuota/LimitRange are platform-owned (they define this app's
+  # blast radius, not something the app team should be able to loosen via
+  # a GitOps commit) - explicitly blacklisted even though they're already
+  # absent from the whitelist above, so removing this project protection
+  # by mistake later can't silently re-open them.
+  namespaceResourceBlacklist:
+    - group: ""
+      kind: ResourceQuota
+    - group: ""
+      kind: LimitRange
+
+  # Two roles, not one cluster-admin-equivalent role for the whole team:
+  # `developers` can iterate day-to-day in dev/staging without needing a
+  # human in the loop, but a prod change always needs a `releasers`
+  # member (a smaller, more trusted group) to run the sync - the same
+  # separation-of-duties reasoning that keeps prod deploy approval a
+  # GitHub Environment gate rather than something every contributor can
+  # trigger. Both explicitly deny delete: neither role should be able to
+  # remove an Application (and cascade-delete its live resources) even by
+  # accident: application/deletion is an explicit platform-team action.
+  roles:
+    - name: developers
+      description: Can sync dev/staging; cannot touch prod or delete Applications.
+      policies:
+        - p, proj:multistate:developers, applications, get, multistate/multistate-api-dev, allow
+        - p, proj:multistate:developers, applications, sync, multistate/multistate-api-dev, allow
+        - p, proj:multistate:developers, applications, get, multistate/multistate-api-staging, allow
+        - p, proj:multistate:developers, applications, sync, multistate/multistate-api-staging, allow
+        - p, proj:multistate:developers, applications, delete, multistate/*, deny
+      groups:
+        - uptimecrew:multistate-engineers
+
+    - name: releasers
+      description: Can sync any Application in the project, including prod.
+      policies:
+        - p, proj:multistate:releasers, applications, get, multistate/*, allow
+        - p, proj:multistate:releasers, applications, sync, multistate/*, allow
+        - p, proj:multistate:releasers, applications, delete, multistate/*, deny
+      groups:
+        - uptimecrew:multistate-engineers-releasers
+
+  # Weekend change freeze on prod only. manualSync: true still allows a
+  # human to force a sync through the window (e.g. a security hotfix);
+  # this only blocks automated/unattended syncs from landing unattended
+  # over a weekend.
+  syncWindows:
+    - kind: deny
+      applications:
+        - multistate-api-prod
+      schedule: "0 17 * * 5"
+      duration: 60h
+      manualSync: true
