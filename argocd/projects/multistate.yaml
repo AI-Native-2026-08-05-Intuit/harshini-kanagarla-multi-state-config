@@ -1,0 +1,18 @@
+# argocd/projects/multistate.yaml - AppProject scoping the multistate team.
+# Task 1 keeps this narrow (dev only); Task 2 expands sourceRepos/
+# destinations/RBAC for staging + prod.
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: multistate
+  namespace: argocd
+spec:
+  description: multistate-api GitOps project
+  sourceRepos:
+    - https://github.com/AI-Native-2026-08-05-Intuit/harshini-kanagarla-multi-state-config.git
+  destinations:
+    - namespace: multistate-dev
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace

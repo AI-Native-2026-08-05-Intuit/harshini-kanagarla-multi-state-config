@@ -1,0 +1,28 @@
+# overlays/dev/kustomization.yaml - dev environment overlay.
+# namespace: rewrites every namespaced resource's metadata.namespace AND
+# the Namespace object's own metadata.name to match - Kustomize's
+# namespace transformer covers both, so base's hardcoded `multistate-dev`
+# only has to be right for THIS overlay; staging/prod override it below.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: multistate-dev
+
+resources:
+  - ../../base
+
+patches:
+  - target:
+      kind: Deployment
+      name: multistate-api
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 2
+  - target:
+      kind: ConfigMap
+      name: multistate-api-config
+    patch: |-
+      - op: replace
+        path: /data/SPRING_PROFILES_ACTIVE
+        value: k8s,dev

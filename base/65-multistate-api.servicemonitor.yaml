@@ -1,0 +1,26 @@
+# manifests/observability/multistate-api-servicemonitor.yaml - W5 D5 Task 1.
+#
+# The `release: kube-prometheus-stack` label on THIS object (not just the
+# selector below) is required: the Prometheus Operator's Prometheus CR is
+# installed by the kube-prometheus-stack chart with a serviceMonitorSelector
+# that matches on that release label, so a ServiceMonitor missing it is never
+# picked up - no error, the scrape just silently never fires.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: multistate-api
+  namespace: multistate-dev
+  labels:
+    app.kubernetes.io/name: multistate-api
+    release: kube-prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: multistate-api
+  namespaceSelector:
+    matchNames:
+      - multistate-dev
+  endpoints:
+    - port: http                      # the Service's *named* port, not 8080
+      path: /actuator/prometheus
+      interval: 15s

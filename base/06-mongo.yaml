@@ -1,0 +1,50 @@
+# manifests/06-mongo.yaml - supporting MongoDB for local/CI k3d runs.
+# Not one of the multistate-api deliverable objects; needed because
+# spring.data.mongodb.auto-index-creation: true makes MongoTemplate's
+# index bootstrap run eagerly at startup, which needs a reachable Mongo
+# the same way Flyway needs a reachable Postgres. Ephemeral (emptyDir).
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+  namespace: multistate-dev
+  labels:
+    app.kubernetes.io/name: mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mongo
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: mongo
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:7
+          ports:
+            - { name: mongo, containerPort: 27017 }
+          readinessProbe:
+            exec: { command: ["mongosh", "--quiet", "--eval", "db.adminCommand('ping')"] }
+            periodSeconds: 5
+            failureThreshold: 10
+          volumeMounts:
+            - { name: data, mountPath: /data/db }
+      volumes:
+        - name: data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+  namespace: multistate-dev
+  labels:
+    app.kubernetes.io/name: mongo
+spec:
+  selector:
+    app.kubernetes.io/name: mongo
+  ports:
+    - { name: mongo, port: 27017, targetPort: mongo }

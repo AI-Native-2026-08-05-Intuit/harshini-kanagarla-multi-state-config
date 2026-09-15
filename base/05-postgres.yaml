@@ -1,0 +1,159 @@
+# manifests/05-postgres.yaml - supporting Postgres for local/CI k3d runs.
+# Not one of the multistate-api deliverable objects; it exists because
+# the app's Flyway/JPA startup (spring.jpa.hibernate.ddl-auto: validate)
+# needs a real, schema-seeded Postgres reachable before the container
+# becomes ready — same requirement W5 D2's compose.yaml solved with an
+# initdb-mounted V1/V2 schema. Ephemeral (emptyDir): fine for this lab,
+# not meant to survive cluster teardown.
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-initdb
+  namespace: multistate-dev
+data:
+  01-schema.sql: |
+    -- Multi-State Compliance Domain — schema DDL (Task 2).
+    -- Column-for-column derived from the real @Entity classes (src/main/java/
+    -- com/uptimecrew/multi_state/entity/*.java), NOT from db/README.md's ER
+    -- diagram — a previous version of this file mirrored that older diagram
+    -- instead and silently drifted from the entities (wrong table shape,
+    -- extra/missing columns), which only surfaced as a Hibernate
+    -- ddl-auto: validate "Schema-validation: missing column" crash at
+    -- runtime. Keep this file in sync with the entity classes, not the ERD.
+
+    CREATE SCHEMA IF NOT EXISTS multistate;
+    SET search_path TO multistate, public;
+
+    -- tenant (Tenant.java): id, name, kind, created_at.
+    CREATE TABLE multistate.tenant (
+        id           VARCHAR(64)   PRIMARY KEY,
+        name         VARCHAR(255)  NOT NULL UNIQUE,
+        kind         VARCHAR(32)   NOT NULL,
+        created_at   TIMESTAMPTZ   NOT NULL DEFAULT NOW()
+    );
+
+    -- jurisdiction (Jurisdiction.java): code, name, income_tax.
+    CREATE TABLE multistate.jurisdiction (
+        code         VARCHAR(64)   PRIMARY KEY,
+        name         VARCHAR(255)  NOT NULL UNIQUE,
+        income_tax   BOOLEAN       NOT NULL
+    );
+
+    -- allocation (Allocation.java): id, tenant_id (FK), jurisdiction_code (FK),
+    -- amount, allocated_for, created_at.
+    CREATE TABLE multistate.allocation (
+        id                  VARCHAR(64)   PRIMARY KEY,
+        tenant_id           VARCHAR(64)   NOT NULL
+                            REFERENCES multistate.tenant(id),
+        jurisdiction_code   VARCHAR(64)   NOT NULL
+                            REFERENCES multistate.jurisdiction(code),
+        amount              NUMERIC(12,2) NOT NULL,
+        allocated_for       DATE          NOT NULL,
+        created_at          TIMESTAMPTZ   NOT NULL DEFAULT NOW()
+    );
+
+    -- event_outbox — transactional outbox for Kafka publication (EventOutboxEntity).
+    -- Mirrors src/main/resources/db/migration/V3__event_outbox.sql exactly: the app
+    -- runs with ddl-auto: validate, so every @Entity's table must already exist.
+    CREATE TABLE IF NOT EXISTS multistate.event_outbox (
+        id            UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
+        aggregate_id  TEXT         NOT NULL,
+        topic         TEXT         NOT NULL,
+        payload       JSONB        NOT NULL,
+        occurred_at   TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+        published_at  TIMESTAMPTZ  NULL
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_event_outbox_unpublished
+        ON multistate.event_outbox (occurred_at)
+        WHERE published_at IS NULL;
+  02-seed.sql: |
+    -- Multi-State Compliance Domain — seed data (Task 3).
+    -- Column set matches 01-schema.sql, which matches the @Entity classes.
+    -- Every INSERT below runs inside ONE transaction: a failure on any row
+    -- rolls back every previous row in this file.
+
+    BEGIN;
+
+    INSERT INTO multistate.tenant (id, name, kind, created_at) VALUES
+        ('tenant-a', 'Tenant Worker A', 'INDIVIDUAL', NOW()),
+        ('tenant-b', 'Tenant Worker B', 'INDIVIDUAL', NOW()),
+        ('tenant-c', 'Tenant Worker C', 'INDIVIDUAL', NOW()),
+        ('tenant-d', 'Tenant Worker D', 'INDIVIDUAL', NOW()),
+        ('tenant-e', 'Tenant Worker E', 'INDIVIDUAL', NOW()),
+        ('tenant-f', 'Tenant Worker F', 'INDIVIDUAL', NOW());  -- intentionally no allocation rows: proves LEFT JOIN keeps orphan parents
+
+    INSERT INTO multistate.jurisdiction (code, name, income_tax) VALUES
+        ('NY', 'New York',   TRUE),
+        ('NJ', 'New Jersey', TRUE),
+        ('CA', 'California', TRUE),
+        ('TX', 'Texas',      FALSE),
+        ('PA', 'Pennsylvania', TRUE);
+
+    INSERT INTO multistate.allocation (id, tenant_id, jurisdiction_code, amount, allocated_for, created_at) VALUES
+        ('doc-2026-0001', 'tenant-a', 'NY', 1200.00, '2026-01-05', NOW()),
+        ('doc-2026-0002', 'tenant-a', 'NJ',  800.00, '2026-01-06', NOW()),
+        ('doc-2026-0003', 'tenant-b', 'CA', 1500.50, '2026-01-05', NOW()),
+        ('doc-2026-0004', 'tenant-c', 'TX',  950.25, '2026-01-07', NOW()),
+        ('doc-2026-0005', 'tenant-d', 'PA', 1100.00, '2026-01-08', NOW()),
+        ('doc-2026-0006', 'tenant-e', 'NY',  700.00, '2026-01-09', NOW()),
+        ('doc-2026-0007', 'tenant-a', 'CA',  300.00, '2026-01-10', NOW());  -- gives tenant-a 3 allocations, proves HAVING COUNT(*) >= 3
+
+    COMMIT;
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: multistate-dev
+  labels:
+    app.kubernetes.io/name: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: postgres
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16
+          ports:
+            - { name: postgres, containerPort: 5432 }
+          env:
+            - name: POSTGRES_DB
+              value: multistate_dev
+            - name: POSTGRES_USER
+              value: multistate_dev
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef: { name: multistate-api-secrets, key: SPRING_DATASOURCE_PASSWORD }
+          readinessProbe:
+            exec: { command: ["pg_isready", "-U", "multistate_dev", "-d", "multistate_dev"] }
+            periodSeconds: 5
+            failureThreshold: 10
+          volumeMounts:
+            - { name: data,   mountPath: /var/lib/postgresql/data }
+            - { name: initdb, mountPath: /docker-entrypoint-initdb.d, readOnly: true }
+      volumes:
+        - name: data
+          emptyDir: {}
+        - name: initdb
+          configMap: { name: postgres-initdb }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: multistate-dev
+  labels:
+    app.kubernetes.io/name: postgres
+spec:
+  selector:
+    app.kubernetes.io/name: postgres
+  ports:
+    - { name: postgres, port: 5432, targetPort: postgres }

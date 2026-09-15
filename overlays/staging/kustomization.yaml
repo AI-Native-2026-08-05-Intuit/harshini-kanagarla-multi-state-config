@@ -1,0 +1,24 @@
+# overlays/staging/kustomization.yaml - staging environment overlay.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: multistate-staging
+
+resources:
+  - ../../base
+
+patches:
+  - target:
+      kind: Deployment
+      name: multistate-api
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 2
+  - target:
+      kind: ConfigMap
+      name: multistate-api-config
+    patch: |-
+      - op: replace
+        path: /data/SPRING_PROFILES_ACTIVE
+        value: k8s,staging
