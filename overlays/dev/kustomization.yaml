@@ -11,7 +11,19 @@ namespace: multistate-dev
 resources:
   - ../../base
 
+# sync-wave: "-1" on the Namespace only (not the whole overlay) - a
+# brand-new cluster needs the namespace to exist before the Deployment/
+# Service/ConfigMap land in it, so it must sync strictly before wave "0"
+# (the ApplicationSet template's own default wave for this environment).
 patches:
+  - target:
+      kind: Namespace
+      name: multistate-dev
+    patch: |-
+      - op: add
+        path: /metadata/annotations
+        value:
+          argocd.argoproj.io/sync-wave: "-1"
   - target:
       kind: Deployment
       name: multistate-api
@@ -26,3 +38,6 @@ patches:
       - op: replace
         path: /data/SPRING_PROFILES_ACTIVE
         value: k8s,dev
+      - op: replace
+        path: /data/LOGGING_LEVEL_ROOT
+        value: DEBUG

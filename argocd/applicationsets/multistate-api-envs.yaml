@@ -1,0 +1,86 @@
+# argocd/applicationsets/multistate-api-envs.yaml - fans one Application
+# out to dev/staging/prod. A matrix generator even though there's only one
+# cluster today: the (list x clusters) shape is what lets a second real
+# cluster get added later purely by labelling its registered Secret
+# uptimecrew.example.internal/tier=workload - no changes to this file, no
+# new Application YAML to author per environment. The list generator's
+# per-env tuples (namespace, overlay path, replica-count knobs already
+# live in each overlay) stay the single source of truth for what "dev"/
+# "staging"/"prod" mean; the clusters generator is the single source of
+# truth for where they run.
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: multistate-api-envs
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - matrix:
+        generators:
+          - list:
+              elements:
+                - env: dev
+                  overlay: overlays/dev
+                  namespace: multistate-dev
+                  wave: "0"
+                - env: staging
+                  overlay: overlays/staging
+                  namespace: multistate-staging
+                  wave: "1"
+                - env: prod
+                  overlay: overlays/prod
+                  namespace: multistate-prod
+                  wave: "2"
+          - clusters:
+              selector:
+                matchLabels:
+                  uptimecrew.example.internal/tier: workload
+  template:
+    metadata:
+      name: "multistate-api-{{.env}}"
+      labels:
+        # Matches argocd-system/notifications-cm.yaml's subscriptions
+        # selector (team=multistate) - every generated Application gets
+        # Slack notification coverage automatically, with no per-Application
+        # opt-in step needed as new environments are added.
+        team: multistate
+      annotations:
+        # Applied to the Application resource itself, not its managed
+        # resources - controls the order Applications sync in relative to
+        # each other when several are triggered together (e.g. this
+        # ApplicationSet's first apply). Each overlay's own Namespace
+        # object carries its own sync-wave "-1" so it lands ahead of that
+        # environment's Deployment/Service regardless of this wave.
+        argocd.argoproj.io/sync-wave: "{{.wave}}"
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      project: multistate
+      source:
+        repoURL: https://github.com/AI-Native-2026-08-05-Intuit/harshini-kanagarla-multi-state-config.git
+        targetRevision: main
+        path: "{{.overlay}}"
+      destination:
+        server: "{{.server}}"
+        namespace: "{{.namespace}}"
+      syncPolicy:
+        automated:
+          prune:    true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
+  # preserveResourcesOnDeletion lives on the ApplicationSet's own
+  # top-level spec.syncPolicy (ApplicationSetSyncPolicy), NOT the
+  # per-Application template's spec.syncPolicy above - it governs how the
+  # ApplicationSet controller treats a *generated Application* when its
+  # generator no longer produces it (an entry removed from the list
+  # generator, or a cluster no longer matching the clusters selector),
+  # not how that Application syncs its own cluster resources. true means:
+  # stop generating/managing that Application, but do NOT delete it (and
+  # cascade-delete its already-synced live resources) - the controller
+  # just stops reconciling it.
+  syncPolicy:
+    preserveResourcesOnDeletion: true

@@ -1,34 +1,16 @@
-# manifests/00-namespace.yaml - the bounded blast radius for multistate-api.
-# A ResourceQuota caps total resource use; a LimitRange supplies defaults
-# so pods that omit requests/limits still get sane numbers.
-
+# base/00-namespace.yaml - the app namespace this workload deploys into.
+#
+# ResourceQuota + LimitRange used to live here too, but they're
+# platform-owned per the AppProject's namespaceResourceBlacklist
+# (argocd/projects/multistate.yaml) - the app team's GitOps repo can
+# create the namespace and the workloads inside it, but the blast-radius
+# caps on that namespace are a platform-team concern applied out-of-band,
+# not something this repo's syncPolicy.automated should be able to loosen
+# via a commit. Removed here to match; re-added by the platform team's own
+# tooling if/when this cluster needs it.
 apiVersion: v1
 kind: Namespace
 metadata:
   name: multistate-dev
   labels:
     app.kubernetes.io/part-of: multistate
----
-apiVersion: v1
-kind: ResourceQuota
-metadata:
-  name: multistate-dev-quota
-  namespace: multistate-dev
-spec:
-  hard:
-    requests.cpu:    "4"
-    requests.memory: 8Gi
-    limits.cpu:      "8"
-    limits.memory:   16Gi
-    pods:            "20"
----
-apiVersion: v1
-kind: LimitRange
-metadata:
-  name: multistate-dev-defaults
-  namespace: multistate-dev
-spec:
-  limits:
-    - type: Container
-      default:        { cpu: 500m, memory: 768Mi }   # if the pod omits limits
-      defaultRequest: { cpu: 100m, memory: 256Mi }   # if the pod omits requests
