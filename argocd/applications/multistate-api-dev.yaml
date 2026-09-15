@@ -1,0 +1,27 @@
+# argocd/applications/multistate-api-dev.yaml - the dev Application anchor.
+# resources-finalizer.argocd.argoproj.io is mandatory: without it, deleting
+# this Application object leaves its managed resources orphaned in-cluster
+# instead of Argo CD cascading the delete.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: multistate-api-dev
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: multistate
+  source:
+    repoURL: https://github.com/AI-Native-2026-08-05-Intuit/harshini-kanagarla-multi-state-config.git
+    targetRevision: main
+    path: overlays/dev
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: multistate-dev
+  syncPolicy:
+    automated:
+      prune:    true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

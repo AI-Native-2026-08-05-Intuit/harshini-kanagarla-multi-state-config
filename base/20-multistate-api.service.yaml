@@ -1,0 +1,21 @@
+# manifests/20-multistate-api.service.yaml - stable in-cluster name.
+# ClusterIP only; external traffic comes through the Ingress.
+# Selector MUST match the Deployment's pod labels.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: multistate-api
+  namespace: multistate-dev
+  labels:
+    app.kubernetes.io/name:      multistate-api
+    app.kubernetes.io/component: api
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: multistate-api
+  ports:
+    - name:       http
+      port:       8080
+      targetPort: http              # the *named* container port, not a number
+      protocol:   TCP

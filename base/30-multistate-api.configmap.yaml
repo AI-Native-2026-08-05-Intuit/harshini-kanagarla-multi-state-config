@@ -1,0 +1,24 @@
+# manifests/30-multistate-api.configmap.yaml - non-secret env.
+# Plain key/value pairs. Hostnames are the in-cluster DNS names
+# (<svc>.multistate-dev.svc.cluster.local); anything sensitive belongs
+# in the Secret, never here.
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: multistate-api-config
+  namespace: multistate-dev
+  labels:
+    app.kubernetes.io/name: multistate-api
+data:
+  SPRING_PROFILES_ACTIVE:         k8s
+  LOGGING_LEVEL_ROOT:              INFO
+  SERVER_PORT:                     "8080"
+  SPRING_DATASOURCE_URL:           jdbc:postgresql://postgres.multistate-dev.svc.cluster.local:5432/multistate_dev
+  SPRING_DATASOURCE_USERNAME:      multistate_dev
+  SPRING_DATA_REDIS_HOST:          redis.multistate-dev.svc.cluster.local
+  SPRING_DATA_REDIS_PORT:          "6379"
+  SPRING_DATA_MONGODB_URI:         mongodb://mongo.multistate-dev.svc.cluster.local:27017/multistate
+  SPRING_KAFKA_BOOTSTRAP_SERVERS:  kafka.multistate-dev.svc.cluster.local:9092
+  OTEL_EXPORTER_OTLP_ENDPOINT:     http://otel-collector.monitoring.svc.cluster.local:4318
+  OTEL_SERVICE_NAME:               multistate-api
