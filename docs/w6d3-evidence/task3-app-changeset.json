@@ -1,0 +1,98 @@
+{
+    "Changes": [
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Add",
+                "LogicalResourceId": "DbInstance",
+                "ResourceType": "AWS::RDS::DBInstance",
+                "Scope": [],
+                "Details": []
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Add",
+                "LogicalResourceId": "DbMasterSecret",
+                "ResourceType": "AWS::SecretsManager::Secret",
+                "Scope": [],
+                "Details": []
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Add",
+                "LogicalResourceId": "DbSecurityGroup",
+                "ResourceType": "AWS::EC2::SecurityGroup",
+                "Scope": [],
+                "Details": []
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Add",
+                "LogicalResourceId": "DbSubnetGroup",
+                "ResourceType": "AWS::RDS::DBSubnetGroup",
+                "Scope": [],
+                "Details": []
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Add",
+                "LogicalResourceId": "SecretTargetAttachment",
+                "ResourceType": "AWS::SecretsManager::SecretTargetAttachment",
+                "Scope": [],
+                "Details": []
+            }
+        }
+    ],
+    "ChangeSetName": "initial-create",
+    "ChangeSetId": "arn:aws:cloudformation:us-east-1:228615803036:changeSet/initial-create/3cd434c0-334b-4032-b00c-3e9623b61b5a",
+    "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-app-harshini-dev/6580ee70-b1ed-11f1-bca1-1209b76a853f",
+    "StackName": "multistate-app-harshini-dev",
+    "Description": null,
+    "Parameters": [
+        {
+            "ParameterKey": "NetworkStackName",
+            "ParameterValue": "multistate-network-harshini-dev"
+        },
+        {
+            "ParameterKey": "PersonName",
+            "ParameterValue": "harshini"
+        },
+        {
+            "ParameterKey": "DbInstanceClass",
+            "ParameterValue": "db.t4g.small"
+        },
+        {
+            "ParameterKey": "OwnerTag",
+            "ParameterValue": "harshini-kanagarla"
+        },
+        {
+            "ParameterKey": "EnvName",
+            "ParameterValue": "dev"
+        }
+    ],
+    "CreationTime": "2026-09-16T16:40:59.419000+00:00",
+    "ExecutionStatus": "AVAILABLE",
+    "Status": "CREATE_COMPLETE",
+    "StatusReason": null,
+    "NotificationARNs": [],
+    "RollbackConfiguration": {},
+    "Capabilities": [
+        "CAPABILITY_NAMED_IAM"
+    ],
+    "Tags": null,
+    "ParentChangeSetId": null,
+    "IncludeNestedStacks": false,
+    "RootChangeSetId": null,
+    "OnStackFailure": null,
+    "ImportExistingResources": null,
+    "StackDriftStatus": null,
+    "DeploymentMode": null
+}

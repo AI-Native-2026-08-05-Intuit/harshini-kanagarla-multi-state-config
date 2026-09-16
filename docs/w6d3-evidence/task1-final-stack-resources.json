@@ -1,0 +1,40 @@
+{
+    "StackResources": [
+        {
+            "StackName": "multistate-bootstrap-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-bootstrap-harshini-dev/42c338f0-b1ea-11f1-a42a-122a1ecf92b5",
+            "LogicalResourceId": "BootstrapBucket",
+            "PhysicalResourceId": "multi-state-harshini",
+            "ResourceType": "AWS::S3::Bucket",
+            "Timestamp": "2026-09-16T16:27:26.927000+00:00",
+            "ResourceStatus": "UPDATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-bootstrap-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-bootstrap-harshini-dev/42c338f0-b1ea-11f1-a42a-122a1ecf92b5",
+            "LogicalResourceId": "BootstrapBucketPolicy",
+            "PhysicalResourceId": "multi-state-harshini",
+            "ResourceType": "AWS::S3::BucketPolicy",
+            "Timestamp": "2026-09-16T16:27:29.332000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-bootstrap-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-bootstrap-harshini-dev/42c338f0-b1ea-11f1-a42a-122a1ecf92b5",
+            "LogicalResourceId": "CfnDeployRole",
+            "PhysicalResourceId": "multistate-api-cfn-deploy-harshini",
+            "ResourceType": "AWS::IAM::Role",
+            "Timestamp": "2026-09-16T16:27:46.397000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        }
+    ]
+}

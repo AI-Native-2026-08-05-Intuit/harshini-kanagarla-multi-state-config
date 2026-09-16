@@ -1,0 +1,519 @@
+{
+    "Changes": [
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Modify",
+                "LogicalResourceId": "InternetGateway",
+                "PhysicalResourceId": "igw-0fe8e4c7a5eb79a2a",
+                "ResourceType": "AWS::EC2::InternetGateway",
+                "Replacement": "False",
+                "Scope": [
+                    "Properties"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "ParameterReference",
+                        "CausingEntity": "OwnerTag"
+                    },
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Dynamic",
+                        "ChangeSource": "DirectModification"
+                    }
+                ]
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Modify",
+                "LogicalResourceId": "MultistateAppSecurityGroup",
+                "PhysicalResourceId": "sg-03ca2d034b7130008",
+                "ResourceType": "AWS::EC2::SecurityGroup",
+                "Replacement": "False",
+                "Scope": [
+                    "Properties"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "ParameterReference",
+                        "CausingEntity": "OwnerTag"
+                    },
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Dynamic",
+                        "ChangeSource": "DirectModification"
+                    }
+                ]
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Modify",
+                "LogicalResourceId": "NatEipA",
+                "PhysicalResourceId": "100.59.123.139",
+                "ResourceType": "AWS::EC2::EIP",
+                "Replacement": "False",
+                "Scope": [
+                    "Properties"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "ParameterReference",
+                        "CausingEntity": "OwnerTag"
+                    },
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Dynamic",
+                        "ChangeSource": "DirectModification"
+                    }
+                ]
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Modify",
+                "LogicalResourceId": "NatGatewayA",
+                "PhysicalResourceId": "nat-0e44ec0082d52c0dc",
+                "ResourceType": "AWS::EC2::NatGateway",
+                "Replacement": "Conditional",
+                "Scope": [
+                    "Properties"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "ParameterReference",
+                        "CausingEntity": "OwnerTag"
+                    },
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "AllocationId",
+                            "RequiresRecreation": "Always"
+                        },
+                        "Evaluation": "Dynamic",
+                        "ChangeSource": "ResourceAttribute",
+                        "CausingEntity": "NatEipA.AllocationId"
+                    },
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Dynamic",
+                        "ChangeSource": "DirectModification"
+                    }
+                ]
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Modify",
+                "LogicalResourceId": "PrivateDefaultRouteA",
+                "PhysicalResourceId": "rtb-00b585cc826f4ec61|0.0.0.0/0",
+                "ResourceType": "AWS::EC2::Route",
+                "Replacement": "False",
+                "Scope": [
+                    "Properties"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "NatGatewayId",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Dynamic",
+                        "ChangeSource": "ResourceReference",
+                        "CausingEntity": "NatGatewayA"
+                    }
+                ]
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Modify",
+                "LogicalResourceId": "PrivateRouteTableA",
+                "PhysicalResourceId": "rtb-00b585cc826f4ec61",
+                "ResourceType": "AWS::EC2::RouteTable",
+                "Replacement": "False",
+                "Scope": [
+                    "Properties"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "ParameterReference",
+                        "CausingEntity": "OwnerTag"
+                    },
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Dynamic",
+                        "ChangeSource": "DirectModification"
+                    }
+                ]
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Modify",
+                "LogicalResourceId": "PrivateSubnetA",
+                "PhysicalResourceId": "subnet-05a86c225e3951e15",
+                "ResourceType": "AWS::EC2::Subnet",
+                "Replacement": "False",
+                "Scope": [
+                    "Properties"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "ParameterReference",
+                        "CausingEntity": "OwnerTag"
+                    },
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Dynamic",
+                        "ChangeSource": "DirectModification"
+                    }
+                ]
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Modify",
+                "LogicalResourceId": "PrivateSubnetB",
+                "PhysicalResourceId": "subnet-0ad8e65a0a33441ae",
+                "ResourceType": "AWS::EC2::Subnet",
+                "Replacement": "False",
+                "Scope": [
+                    "Properties"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "ParameterReference",
+                        "CausingEntity": "OwnerTag"
+                    },
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Dynamic",
+                        "ChangeSource": "DirectModification"
+                    }
+                ]
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Modify",
+                "LogicalResourceId": "PrivateSubnetC",
+                "PhysicalResourceId": "subnet-0262a0218c7905349",
+                "ResourceType": "AWS::EC2::Subnet",
+                "Replacement": "False",
+                "Scope": [
+                    "Properties"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "ParameterReference",
+                        "CausingEntity": "OwnerTag"
+                    },
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Dynamic",
+                        "ChangeSource": "DirectModification"
+                    }
+                ]
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Modify",
+                "LogicalResourceId": "PublicRouteTable",
+                "PhysicalResourceId": "rtb-0ce3cca47ff7eddc0",
+                "ResourceType": "AWS::EC2::RouteTable",
+                "Replacement": "False",
+                "Scope": [
+                    "Properties"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "ParameterReference",
+                        "CausingEntity": "OwnerTag"
+                    },
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Dynamic",
+                        "ChangeSource": "DirectModification"
+                    }
+                ]
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Modify",
+                "LogicalResourceId": "PublicSubnetA",
+                "PhysicalResourceId": "subnet-0899b0234d7cfd978",
+                "ResourceType": "AWS::EC2::Subnet",
+                "Replacement": "False",
+                "Scope": [
+                    "Properties"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "ParameterReference",
+                        "CausingEntity": "OwnerTag"
+                    },
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Dynamic",
+                        "ChangeSource": "DirectModification"
+                    }
+                ]
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Modify",
+                "LogicalResourceId": "PublicSubnetB",
+                "PhysicalResourceId": "subnet-0ab0838e9fa4bee66",
+                "ResourceType": "AWS::EC2::Subnet",
+                "Replacement": "False",
+                "Scope": [
+                    "Properties"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "ParameterReference",
+                        "CausingEntity": "OwnerTag"
+                    },
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Dynamic",
+                        "ChangeSource": "DirectModification"
+                    }
+                ]
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Modify",
+                "LogicalResourceId": "PublicSubnetC",
+                "PhysicalResourceId": "subnet-063eaaa87e3de7cee",
+                "ResourceType": "AWS::EC2::Subnet",
+                "Replacement": "False",
+                "Scope": [
+                    "Properties"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "ParameterReference",
+                        "CausingEntity": "OwnerTag"
+                    },
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Dynamic",
+                        "ChangeSource": "DirectModification"
+                    }
+                ]
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Modify",
+                "LogicalResourceId": "Vpc",
+                "PhysicalResourceId": "vpc-0cdea4bf47f7ba9f1",
+                "ResourceType": "AWS::EC2::VPC",
+                "Replacement": "False",
+                "Scope": [
+                    "Properties"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "ParameterReference",
+                        "CausingEntity": "OwnerTag"
+                    },
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Dynamic",
+                        "ChangeSource": "DirectModification"
+                    }
+                ]
+            }
+        }
+    ],
+    "ChangeSetName": "tag-only-update",
+    "ChangeSetId": "arn:aws:cloudformation:us-east-1:228615803036:changeSet/tag-only-update/18ee5764-8bfa-4706-9972-97916f609798",
+    "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+    "StackName": "multistate-network-harshini-dev",
+    "Description": null,
+    "Parameters": [
+        {
+            "ParameterKey": "PersonName",
+            "ParameterValue": "harshini"
+        },
+        {
+            "ParameterKey": "VpcCidr",
+            "ParameterValue": "10.43.0.0/16"
+        },
+        {
+            "ParameterKey": "OwnerTag",
+            "ParameterValue": "harshini-kanagarla-w6d3"
+        },
+        {
+            "ParameterKey": "EnvName",
+            "ParameterValue": "dev"
+        }
+    ],
+    "CreationTime": "2026-09-16T17:25:18.395000+00:00",
+    "ExecutionStatus": "AVAILABLE",
+    "Status": "CREATE_COMPLETE",
+    "StatusReason": null,
+    "NotificationARNs": [],
+    "RollbackConfiguration": {},
+    "Capabilities": [],
+    "Tags": null,
+    "ParentChangeSetId": null,
+    "IncludeNestedStacks": false,
+    "RootChangeSetId": null,
+    "OnStackFailure": null,
+    "ImportExistingResources": null,
+    "StackDriftStatus": null,
+    "DeploymentMode": null
+}

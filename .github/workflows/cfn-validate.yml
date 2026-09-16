@@ -1,0 +1,88 @@
+# .github/workflows/cfn-validate.yml
+# CI gate for every PR touching cfn/: cfn-lint, cfn-nag, and
+# `aws cloudformation validate-template` against all four stack
+# templates. Required status check on main -- a red run blocks merge.
+#
+# The validate-template step uses OIDC against multistate-api-cfn-deploy-harshini
+# (created by cfn/multistate-bootstrap-dev.yaml, Task 1) the same way
+# _build-and-push.yml uses multistate-api-build-push: no static AWS
+# keys, a short-lived GitHub-signed JWT exchanged via
+# sts:AssumeRoleWithWebIdentity, scoped to this repo's ref/PR only.
+name: cfn-validate
+
+on:
+  pull_request:
+    paths:
+      - "cfn/**"
+      - ".github/workflows/cfn-validate.yml"
+
+permissions:
+  contents: read       # checkout
+  id-token: write      # OIDC for aws cli
+
+env:
+  AWS_REGION: us-east-1
+
+jobs:
+  validate:
+    name: cfn-lint + cfn-nag + aws validate-template
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608  # v4.1.7
+
+      - name: Set up Python (for cfn-lint)
+        uses: actions/setup-python@39cd14951b08e74b54015e9e001cdefcf80e669f  # v5.1.1
+        with:
+          python-version: "3.12"
+
+      - name: Install cfn-lint
+        run: pip install cfn-lint==1.10.3
+
+      - name: Set up Ruby (for cfn-nag)
+        uses: ruby/setup-ruby@a4effe49ee8ee5b8b5091268c473a4628afb5651  # v1.211.0
+        with:
+          ruby-version: "3.3"
+
+      - name: Install cfn-nag
+        run: gem install cfn-nag -v 0.8.10
+
+      - name: cfn-lint
+        run: cfn-lint cfn/*.yaml
+
+      - name: cfn-nag
+        run: cfn_nag_scan --input-path cfn --output-format txt --fail-on-warnings
+
+      # OIDC federation using the bootstrap-stack role (Task 1). This
+      # step only succeeds once multistate-bootstrap-harshini-dev has been
+      # deployed and multistate-api-cfn-deploy-harshini exists.
+      - name: Configure AWS credentials (OIDC, read-only)
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a  # v4.3.1
+        with:
+          role-to-assume: arn:aws:iam::228615803036:role/multistate-api-cfn-deploy-harshini
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: aws cloudformation validate-template (bootstrap)
+        run: |
+          aws cloudformation validate-template \
+            --template-body file://cfn/multistate-bootstrap-dev.yaml \
+            --region ${{ env.AWS_REGION }}
+
+      - name: aws cloudformation validate-template (network)
+        run: |
+          aws cloudformation validate-template \
+            --template-body file://cfn/multistate-network-dev.yaml \
+            --region ${{ env.AWS_REGION }}
+
+      - name: aws cloudformation validate-template (app)
+        run: |
+          aws cloudformation validate-template \
+            --template-body file://cfn/multistate-app-dev.yaml \
+            --region ${{ env.AWS_REGION }}
+
+      - name: aws cloudformation validate-template (artifacts)
+        run: |
+          aws cloudformation validate-template \
+            --template-body file://cfn/multistate-artifacts-dev.yaml \
+            --region ${{ env.AWS_REGION }}

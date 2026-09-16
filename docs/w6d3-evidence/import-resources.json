@@ -1,0 +1,9 @@
+[
+  {
+    "ResourceType": "AWS::S3::Bucket",
+    "LogicalResourceId": "BootstrapBucket",
+    "ResourceIdentifier": {
+      "BucketName": "multi-state-harshini"
+    }
+  }
+]

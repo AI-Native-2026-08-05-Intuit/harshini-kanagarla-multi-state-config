@@ -1,0 +1,80 @@
+{
+    "Stacks": [
+        {
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-bootstrap-harshini-dev/42c338f0-b1ea-11f1-a42a-122a1ecf92b5",
+            "StackName": "multistate-bootstrap-harshini-dev",
+            "ChangeSetId": "arn:aws:cloudformation:us-east-1:228615803036:changeSet/add-policy-and-role-v2/7e895cdd-21f6-42e6-a927-416d677bbc05",
+            "Description": "multistate bootstrap stack -- artefact bucket + CFN deploy role (Task 1).",
+            "Parameters": [
+                {
+                    "ParameterKey": "PersonName",
+                    "ParameterValue": "harshini"
+                },
+                {
+                    "ParameterKey": "ExistingBucketName",
+                    "ParameterValue": "multi-state-harshini"
+                },
+                {
+                    "ParameterKey": "GitHubOrg",
+                    "ParameterValue": "AI-Native-2026-08-05-Intuit"
+                },
+                {
+                    "ParameterKey": "RetentionDays",
+                    "ParameterValue": "30"
+                },
+                {
+                    "ParameterKey": "OwnerTag",
+                    "ParameterValue": "harshini-kanagarla"
+                },
+                {
+                    "ParameterKey": "EnvName",
+                    "ParameterValue": "dev"
+                },
+                {
+                    "ParameterKey": "GitHubRepo",
+                    "ParameterValue": "harshini-kanagarla-multi-state"
+                }
+            ],
+            "CreationTime": "2026-09-16T16:19:18.370000+00:00",
+            "LastUpdatedTime": "2026-09-16T16:27:00.784000+00:00",
+            "RollbackConfiguration": {},
+            "StackStatus": "UPDATE_COMPLETE",
+            "DisableRollback": false,
+            "NotificationARNs": [],
+            "Capabilities": [
+                "CAPABILITY_NAMED_IAM"
+            ],
+            "Outputs": [
+                {
+                    "OutputKey": "BootstrapBucketArn",
+                    "OutputValue": "arn:aws:s3:::multi-state-harshini",
+                    "Description": "ARN of the bootstrap artefact bucket.",
+                    "ExportName": "multistate-bootstrap-harshini-dev-BucketArn"
+                },
+                {
+                    "OutputKey": "BootstrapBucketName",
+                    "OutputValue": "multi-state-harshini",
+                    "Description": "Globally-unique bootstrap bucket name.",
+                    "ExportName": "multistate-bootstrap-harshini-dev-BucketName"
+                },
+                {
+                    "OutputKey": "CfnDeployRoleArn",
+                    "OutputValue": "arn:aws:iam::228615803036:role/multistate-api-cfn-deploy-harshini",
+                    "Description": "ARN the GitHub Actions workflows assume via OIDC to deploy CFN stacks.",
+                    "ExportName": "multistate-bootstrap-harshini-dev-CfnDeployRoleArn"
+                }
+            ],
+            "Tags": [],
+            "EnableTerminationProtection": false,
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            },
+            "LastOperations": [
+                {
+                    "OperationType": "UPDATE_STACK",
+                    "OperationId": "507a9d1c-801d-4b5f-853b-5ed7fbb7e231"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,181 @@
+# cfn/multistate-bootstrap-dev.yaml
+# First CloudFormation stack for this capstone. Creates the artefact
+# bucket used by `aws cloudformation package` and the IAM role that
+# GitHub Actions assumes via OIDC to deploy every later multistate-*
+# stack. Deploy via the ChangeSet flow (see multistate-api/INFRA.md).
+AWSTemplateFormatVersion: "2010-09-09"
+Description: multistate bootstrap stack -- artefact bucket + CFN deploy role (Task 1).
+
+Parameters:
+  EnvName:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, staging, prod]
+    Description: Deployment environment name (used in resource naming/tags).
+  RetentionDays:
+    Type: Number
+    Default: 30
+    MinValue: 7
+    MaxValue: 3650
+    Description: Days to retain noncurrent bucket object versions before expiry.
+  GitHubOrg:
+    Type: String
+    Default: AI-Native-2026-08-05-Intuit
+    Description: GitHub org hosting the capstone repo (OIDC sub-claim trust).
+  GitHubRepo:
+    Type: String
+    # Deployed stack currently trusts harshini-kanagarla-multi-state (default
+    # used at initial deploy time, before templates moved to this config
+    # repo). Needs a follow-up UPDATE change set with this new default to
+    # bring the live CfnDeployRole trust policy in sync -- see INFRA.md.
+    Default: harshini-kanagarla-multi-state-config
+    Description: GitHub repo whose workflows are trusted to assume the deploy role.
+  OwnerTag:
+    Type: String
+    Default: harshini-kanagarla
+    Description: Required sandbox SCP tag "user" -- lowercase name of the resource owner.
+  PersonName:
+    Type: String
+    Default: harshini
+    Description: Short per-person suffix so account-unique resource names (bucket, IAM role) don't collide with teammates sharing this sandbox account.
+  ExistingBucketName:
+    Type: String
+    Default: multi-state-harshini
+    Description: Name of a pre-existing S3 bucket to import into this stack. This sandbox account's SCP denies s3:CreateBucket for this user via every method (console, CLI, CloudFormation) as of 2026-09-16, so the bucket must be created out-of-band (it was, before the deny took effect) and imported via "create-change-set --change-set-type IMPORT" rather than created by this template.
+
+Resources:
+  # Bucket for CFN template artefacts uploaded via `aws cloudformation package`.
+  # Hardened from day one: PAB on all four toggles, default SSE-KMS, versioning,
+  # a lifecycle rule expiring noncurrent versions, and a deny-non-TLS policy.
+  BootstrapBucket:
+    Type: AWS::S3::Bucket
+    # Both policies together: DeletionPolicy alone still lets an update that
+    # replaces this bucket (e.g. a BucketName change) destroy it silently.
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      BucketName: !Ref ExistingBucketName
+      VersioningConfiguration:
+        Status: Enabled
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: aws:kms
+              KMSMasterKeyID: alias/aws/s3
+            BucketKeyEnabled: true
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      LifecycleConfiguration:
+        Rules:
+          - Id: expire-old-versions
+            Status: Enabled
+            NoncurrentVersionExpiration:
+              NoncurrentDays: !Ref RetentionDays
+      Tags:
+        - {Key: Environment, Value: !Ref EnvName}
+        - {Key: env,     Value: sandbox}
+        - {Key: user,    Value: !Ref OwnerTag}
+        - {Key: Project, Value: multistate}
+
+  BootstrapBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref BootstrapBucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: DenyNonTLS
+            Effect: Deny
+            Principal: "*"
+            Action:
+              - s3:GetObject
+              - s3:PutObject
+              - s3:ListBucket
+            Resource:
+              - !GetAtt BootstrapBucket.Arn
+              - !Sub "${BootstrapBucket.Arn}/*"
+            Condition:
+              Bool:
+                "aws:SecureTransport": "false"
+
+  # Role GitHub Actions assumes via OIDC to deploy every multistate-* stack.
+  # Trust policy pins the sub claim to THIS repo only via StringLike (branch
+  # and PR refs vary; StringEquals cannot express the wildcard suffix).
+  # The aud claim uses StringEquals -- it never varies and must be exact.
+  CfnDeployRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "multistate-api-cfn-deploy-${PersonName}"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: !Sub "arn:aws:iam::${AWS::AccountId}:oidc-provider/token.actions.githubusercontent.com"
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                "token.actions.githubusercontent.com:aud": sts.amazonaws.com
+              StringLike:
+                "token.actions.githubusercontent.com:sub":
+                  - !Sub "repo:${GitHubOrg}/${GitHubRepo}:ref:refs/heads/main"
+                  - !Sub "repo:${GitHubOrg}/${GitHubRepo}:pull_request"
+      Policies:
+        - PolicyName: cfn-deploy-narrow
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              # Twelve explicit CFN actions, scoped to this capstone's stacks only.
+              - Sid: CfnStackOps
+                Effect: Allow
+                Action:
+                  - cloudformation:CreateChangeSet
+                  - cloudformation:DescribeChangeSet
+                  - cloudformation:ExecuteChangeSet
+                  - cloudformation:DeleteChangeSet
+                  - cloudformation:DescribeStacks
+                  - cloudformation:DescribeStackEvents
+                  - cloudformation:DescribeStackResources
+                  - cloudformation:GetTemplate
+                  - cloudformation:ValidateTemplate
+                  - cloudformation:DetectStackDrift
+                  - cloudformation:DescribeStackDriftDetectionStatus
+                  - cloudformation:DescribeStackResourceDrifts
+                Resource:
+                  - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/multistate-*"
+                  - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:changeSet/multistate-*"
+              - Sid: BootstrapBucketRead
+                Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:ListBucket
+                Resource:
+                  - !GetAtt BootstrapBucket.Arn
+                  - !Sub "${BootstrapBucket.Arn}/*"
+              - Sid: PassStackRoles
+                Effect: Allow
+                Action: iam:PassRole
+                Resource:
+                  - !Sub "arn:aws:iam::${AWS::AccountId}:role/multistate-*"
+      Tags:
+        - {Key: Environment, Value: !Ref EnvName}
+        - {Key: env,     Value: sandbox}
+        - {Key: user,    Value: !Ref OwnerTag}
+        - {Key: Project, Value: multistate}
+
+Outputs:
+  BootstrapBucketName:
+    Description: Globally-unique bootstrap bucket name.
+    Value: !Ref BootstrapBucket
+    Export: {Name: !Sub "${AWS::StackName}-BucketName"}
+  BootstrapBucketArn:
+    Description: ARN of the bootstrap artefact bucket.
+    Value: !GetAtt BootstrapBucket.Arn
+    Export: {Name: !Sub "${AWS::StackName}-BucketArn"}
+  CfnDeployRoleArn:
+    Description: ARN the GitHub Actions workflows assume via OIDC to deploy CFN stacks.
+    Value: !GetAtt CfnDeployRole.Arn
+    Export: {Name: !Sub "${AWS::StackName}-CfnDeployRoleArn"}

@@ -1,0 +1,149 @@
+# cfn/multistate-app-dev.yaml
+# Application stack: RDS PostgreSQL + DB subnet group + DB security
+# group + a Secrets Manager secret holding the master credentials.
+# Consumes the network stack's exports via !ImportValue -- NEVER
+# hardcode subnet/SG IDs, or a network rebuild silently strands the
+# app on stale IDs. The DB master password is resolved at deploy
+# time via a Secrets Manager dynamic reference, never a NoEcho
+# Parameter (NoEcho still leaves the value in the template/Parameters
+# API; only Secrets Manager keeps it out of CFN state entirely).
+AWSTemplateFormatVersion: "2010-09-09"
+Description: multistate application stack -- RDS + Secrets Manager (Task 3).
+
+Parameters:
+  EnvName:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, staging, prod]
+    Description: Deployment environment name (used in resource naming/tags).
+  NetworkStackName:
+    Type: String
+    Default: multistate-network-harshini-dev
+    Description: Name of the network stack whose exports this stack imports.
+  PersonName:
+    Type: String
+    Default: harshini
+    Description: Short per-person suffix so account-unique resource names (secret, DB identifier) don't collide with teammates sharing this sandbox account.
+  DbInstanceClass:
+    Type: String
+    Default: db.t4g.small
+    AllowedValues: [db.t4g.small, db.t4g.medium]
+    Description: RDS instance class -- restricted to the sandbox account's allowed t-family classes.
+  OwnerTag:
+    Type: String
+    Default: harshini-kanagarla
+    Description: Required sandbox SCP tag "user" -- lowercase name of the resource owner.
+
+Resources:
+  # Secret is created here (not out-of-band) so this template is
+  # self-contained; GenerateSecretString means CFN never sees the
+  # actual password value, only the secret's ARN.
+  DbMasterSecret:
+    Type: AWS::SecretsManager::Secret
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      Name: !Sub "multistate/${PersonName}/${EnvName}/db-master"
+      Description: !Sub "multistate DB master credentials, ${EnvName}."
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "multistate_master"}'
+        GenerateStringKey: password
+        ExcludeCharacters: '"@/\'
+        PasswordLength: 32
+      Tags:
+        - {Key: Environment, Value: !Ref EnvName}
+        - {Key: env,     Value: sandbox}
+        - {Key: user,    Value: !Ref OwnerTag}
+        - {Key: Project, Value: multistate}
+
+  # Cross-stack pattern: !Split + !ImportValue with Fn::Sub so the
+  # network stack name is parameterized rather than hardcoded.
+  DbSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: !Sub "multistate ${EnvName} private subnets"
+      SubnetIds:
+        !Split
+          - ","
+          - !ImportValue
+            "Fn::Sub": "${NetworkStackName}-PrivateSubnets"
+      Tags:
+        - {Key: Environment, Value: !Ref EnvName}
+        - {Key: env,     Value: sandbox}
+        - {Key: user,    Value: !Ref OwnerTag}
+        - {Key: Project, Value: multistate}
+
+  # DB SG: ingress 5432 only from the app SG imported from the network
+  # stack. This is the reciprocal side of the app SG's 5432 egress.
+  DbSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: !Sub "multistate ${EnvName} DB SG (5432 from app SG only)."
+      VpcId:
+        !ImportValue
+          "Fn::Sub": "${NetworkStackName}-VpcId"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          SourceSecurityGroupId:
+            !ImportValue
+              "Fn::Sub": "${NetworkStackName}-AppSgId"
+          Description: Postgres from app SG only.
+      Tags:
+        - {Key: Name, Value: !Sub "multistate-${EnvName}-db-sg"}
+        - {Key: env,  Value: sandbox}
+        - {Key: user, Value: !Ref OwnerTag}
+
+  # Stateful resource: both Retain policies. MasterUsername/Password
+  # come from Secrets Manager via dynamic reference -- the password
+  # never appears in the template, stack parameters, or CFN state.
+  DbInstance:
+    Type: AWS::RDS::DBInstance
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      DBInstanceIdentifier: !Sub "multistate-${PersonName}-${EnvName}"
+      Engine: postgres
+      # cfn-lint's bundled deprecation snapshot lags AWS's actual supported
+      # version list; verify the current default via the console's engine
+      # version dropdown at deploy time and bump here if AWS has moved on.
+      EngineVersion: "17.5"
+      DBInstanceClass: !Ref DbInstanceClass
+      AllocatedStorage: "20"
+      StorageType: gp3
+      StorageEncrypted: true
+      DBSubnetGroupName: !Ref DbSubnetGroup
+      VPCSecurityGroups: [!Ref DbSecurityGroup]
+      PubliclyAccessible: false
+      MultiAZ: false
+      BackupRetentionPeriod: 7
+      # true, matching the reference doc: in this sandbox, disable via
+      # RDS console (Modify -> uncheck Deletion protection -> Apply)
+      # before the daily teardown deletes this instance.
+      DeletionProtection: true
+      MasterUsername:
+        !Sub "{{resolve:secretsmanager:multistate/${PersonName}/${EnvName}/db-master:SecretString:username}}"
+      MasterUserPassword:
+        !Sub "{{resolve:secretsmanager:multistate/${PersonName}/${EnvName}/db-master:SecretString:password}}"
+      Tags:
+        - {Key: Environment, Value: !Ref EnvName}
+        - {Key: env,     Value: sandbox}
+        - {Key: user,    Value: !Ref OwnerTag}
+        - {Key: Project, Value: multistate}
+    DependsOn: DbMasterSecret
+
+  SecretTargetAttachment:
+    Type: AWS::SecretsManager::SecretTargetAttachment
+    Properties:
+      SecretId: !Ref DbMasterSecret
+      TargetId: !Ref DbInstance
+      TargetType: AWS::RDS::DBInstance
+
+Outputs:
+  DbEndpoint:
+    Value: !GetAtt DbInstance.Endpoint.Address
+    Export: {Name: !Sub "${AWS::StackName}-DbEndpoint"}
+  DbSecretArn:
+    Value: !Ref DbMasterSecret
+    Export: {Name: !Sub "${AWS::StackName}-DbSecretArn"}

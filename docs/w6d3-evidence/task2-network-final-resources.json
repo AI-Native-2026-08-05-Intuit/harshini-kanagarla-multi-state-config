@@ -1,0 +1,268 @@
+{
+    "StackResources": [
+        {
+            "StackName": "multistate-network-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+            "LogicalResourceId": "IgwAttachment",
+            "PhysicalResourceId": "IGW|vpc-0cdea4bf47f7ba9f1",
+            "ResourceType": "AWS::EC2::VPCGatewayAttachment",
+            "Timestamp": "2026-09-16T16:33:41.620000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-network-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+            "LogicalResourceId": "InternetGateway",
+            "PhysicalResourceId": "igw-0fe8e4c7a5eb79a2a",
+            "ResourceType": "AWS::EC2::InternetGateway",
+            "Timestamp": "2026-09-16T16:33:41.935000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-network-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+            "LogicalResourceId": "MultistateAppSecurityGroup",
+            "PhysicalResourceId": "sg-03ca2d034b7130008",
+            "ResourceType": "AWS::EC2::SecurityGroup",
+            "Timestamp": "2026-09-16T16:33:48.373000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-network-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+            "LogicalResourceId": "NatEipA",
+            "PhysicalResourceId": "100.59.123.139",
+            "ResourceType": "AWS::EC2::EIP",
+            "Timestamp": "2026-09-16T16:34:00.816000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-network-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+            "LogicalResourceId": "NatGatewayA",
+            "PhysicalResourceId": "nat-0e44ec0082d52c0dc",
+            "ResourceType": "AWS::EC2::NatGateway",
+            "Timestamp": "2026-09-16T16:35:11.245000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-network-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+            "LogicalResourceId": "PrivateAssocA",
+            "PhysicalResourceId": "rtbassoc-09be89042950954b9",
+            "ResourceType": "AWS::EC2::SubnetRouteTableAssociation",
+            "Timestamp": "2026-09-16T16:33:45.467000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-network-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+            "LogicalResourceId": "PrivateAssocBDev",
+            "PhysicalResourceId": "rtbassoc-0ab70625791c900e0",
+            "ResourceType": "AWS::EC2::SubnetRouteTableAssociation",
+            "Timestamp": "2026-09-16T16:33:45.461000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-network-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+            "LogicalResourceId": "PrivateAssocCDev",
+            "PhysicalResourceId": "rtbassoc-044705255619220d0",
+            "ResourceType": "AWS::EC2::SubnetRouteTableAssociation",
+            "Timestamp": "2026-09-16T16:33:45.385000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-network-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+            "LogicalResourceId": "PrivateDefaultRouteA",
+            "PhysicalResourceId": "rtb-00b585cc826f4ec61|0.0.0.0/0",
+            "ResourceType": "AWS::EC2::Route",
+            "Timestamp": "2026-09-16T16:35:13.722000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-network-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+            "LogicalResourceId": "PrivateRouteTableA",
+            "PhysicalResourceId": "rtb-00b585cc826f4ec61",
+            "ResourceType": "AWS::EC2::RouteTable",
+            "Timestamp": "2026-09-16T16:33:51.014000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-network-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+            "LogicalResourceId": "PrivateSubnetA",
+            "PhysicalResourceId": "subnet-05a86c225e3951e15",
+            "ResourceType": "AWS::EC2::Subnet",
+            "Timestamp": "2026-09-16T16:33:43.299000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-network-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+            "LogicalResourceId": "PrivateSubnetB",
+            "PhysicalResourceId": "subnet-0ad8e65a0a33441ae",
+            "ResourceType": "AWS::EC2::Subnet",
+            "Timestamp": "2026-09-16T16:33:43.319000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-network-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+            "LogicalResourceId": "PrivateSubnetC",
+            "PhysicalResourceId": "subnet-0262a0218c7905349",
+            "ResourceType": "AWS::EC2::Subnet",
+            "Timestamp": "2026-09-16T16:33:43.264000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-network-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+            "LogicalResourceId": "PublicAssocA",
+            "PhysicalResourceId": "rtbassoc-0a33fee7914320fdd",
+            "ResourceType": "AWS::EC2::SubnetRouteTableAssociation",
+            "Timestamp": "2026-09-16T16:33:45.396000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-network-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+            "LogicalResourceId": "PublicAssocB",
+            "PhysicalResourceId": "rtbassoc-0aa37082d2b6fd327",
+            "ResourceType": "AWS::EC2::SubnetRouteTableAssociation",
+            "Timestamp": "2026-09-16T16:33:45.378000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-network-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+            "LogicalResourceId": "PublicAssocC",
+            "PhysicalResourceId": "rtbassoc-0680a2783218d6dbf",
+            "ResourceType": "AWS::EC2::SubnetRouteTableAssociation",
+            "Timestamp": "2026-09-16T16:33:46.026000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-network-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+            "LogicalResourceId": "PublicDefaultRoute",
+            "PhysicalResourceId": "rtb-0ce3cca47ff7eddc0|0.0.0.0/0",
+            "ResourceType": "AWS::EC2::Route",
+            "Timestamp": "2026-09-16T16:33:53.390000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-network-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+            "LogicalResourceId": "PublicRouteTable",
+            "PhysicalResourceId": "rtb-0ce3cca47ff7eddc0",
+            "ResourceType": "AWS::EC2::RouteTable",
+            "Timestamp": "2026-09-16T16:33:51.208000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-network-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+            "LogicalResourceId": "PublicSubnetA",
+            "PhysicalResourceId": "subnet-0899b0234d7cfd978",
+            "ResourceType": "AWS::EC2::Subnet",
+            "Timestamp": "2026-09-16T16:33:43.313000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-network-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+            "LogicalResourceId": "PublicSubnetB",
+            "PhysicalResourceId": "subnet-0ab0838e9fa4bee66",
+            "ResourceType": "AWS::EC2::Subnet",
+            "Timestamp": "2026-09-16T16:33:43.255000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-network-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+            "LogicalResourceId": "PublicSubnetC",
+            "PhysicalResourceId": "subnet-063eaaa87e3de7cee",
+            "ResourceType": "AWS::EC2::Subnet",
+            "Timestamp": "2026-09-16T16:33:43.590000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-network-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+            "LogicalResourceId": "Vpc",
+            "PhysicalResourceId": "vpc-0cdea4bf47f7ba9f1",
+            "ResourceType": "AWS::EC2::VPC",
+            "Timestamp": "2026-09-16T16:33:38.568000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        }
+    ]
+}

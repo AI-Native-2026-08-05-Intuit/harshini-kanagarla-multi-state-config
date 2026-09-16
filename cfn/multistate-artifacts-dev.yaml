@@ -1,0 +1,102 @@
+# cfn/multistate-artifacts-dev.yaml
+# Hardened S3 artefact bucket for SAM build artefacts and GitOps config
+# snapshots. Independent of the network stack -- deploy before the app
+# stack so the bucket exists when the app writes to it. Both
+# DeletionPolicy and UpdateReplacePolicy are Retain so neither a stack
+# delete nor a property-change replacement destroys live artefacts.
+AWSTemplateFormatVersion: "2010-09-09"
+Description: multistate hardened artefact bucket (Task 3).
+
+Parameters:
+  EnvName:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, staging, prod]
+    Description: Deployment environment name (used in resource naming/tags).
+  OwnerTag:
+    Type: String
+    Default: harshini-kanagarla
+    Description: Required sandbox SCP tag "user" -- lowercase name of the resource owner.
+  PersonName:
+    Type: String
+    Default: harshini
+    Description: Short per-person suffix so the globally-unique bucket name doesn't collide with teammates sharing this sandbox account.
+
+Resources:
+  MultistateArtifactsBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      BucketName: !Sub "uptimecrew-multistate-artifacts-${PersonName}-${EnvName}-${AWS::AccountId}"
+      VersioningConfiguration:
+        Status: Enabled
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: aws:kms
+              KMSMasterKeyID: alias/aws/s3
+            BucketKeyEnabled: true
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      LifecycleConfiguration:
+        Rules:
+          - Id: tier-to-ia-then-glacier
+            Status: Enabled
+            Transitions:
+              - StorageClass: STANDARD_IA
+                TransitionInDays: 90
+              - StorageClass: GLACIER_IR
+                TransitionInDays: 365
+          - Id: expire-old-versions
+            Status: Enabled
+            NoncurrentVersionExpiration:
+              NoncurrentDays: 90
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced
+      Tags:
+        - {Key: Environment, Value: !Ref EnvName}
+        - {Key: env,     Value: sandbox}
+        - {Key: user,    Value: !Ref OwnerTag}
+        - {Key: Project, Value: multistate}
+
+  ArtifactsBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref MultistateArtifactsBucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: DenyNonTLS
+            Effect: Deny
+            Principal: "*"
+            Action:
+              - s3:GetObject
+              - s3:PutObject
+              - s3:ListBucket
+            Resource:
+              - !GetAtt MultistateArtifactsBucket.Arn
+              - !Sub "${MultistateArtifactsBucket.Arn}/*"
+            Condition:
+              Bool:
+                "aws:SecureTransport": "false"
+          - Sid: DenyUnencryptedPut
+            Effect: Deny
+            Principal: "*"
+            Action: s3:PutObject
+            Resource: !Sub "${MultistateArtifactsBucket.Arn}/*"
+            Condition:
+              StringNotEquals:
+                "s3:x-amz-server-side-encryption": aws:kms
+
+Outputs:
+  ArtifactBucketName:
+    Value: !Ref MultistateArtifactsBucket
+    Export: {Name: !Sub "${AWS::StackName}-BucketName"}
+  ArtifactBucketArn:
+    Value: !GetAtt MultistateArtifactsBucket.Arn
+    Export: {Name: !Sub "${AWS::StackName}-BucketArn"}
