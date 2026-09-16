@@ -105,10 +105,12 @@ Resources:
     Properties:
       DBInstanceIdentifier: !Sub "multistate-${PersonName}-${EnvName}"
       Engine: postgres
-      # cfn-lint's bundled deprecation snapshot lags AWS's actual supported
-      # version list; verify the current default via the console's engine
-      # version dropdown at deploy time and bump here if AWS has moved on.
-      EngineVersion: "17.5"
+      # cfn-lint's bundled RDS engine-version allowlist varies by release
+      # and disagrees with itself across versions (one release flagged
+      # 16.4 as deprecated and wanted 17.x; CI's release only allows up to
+      # 16.4 and rejects 17.x). 16.4 satisfies both; verify the current
+      # default via the console's engine version dropdown at deploy time.
+      EngineVersion: "16.4"
       DBInstanceClass: !Ref DbInstanceClass
       AllocatedStorage: "20"
       StorageType: gp3
