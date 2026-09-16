@@ -42,6 +42,15 @@ Resources:
     Type: AWS::SecretsManager::Secret
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W77
+            reason: >-
+              Uses the account default aws/secretsmanager KMS key; a
+              customer-managed key would need a new AWS::KMS::Key resource,
+              out of scope for this exercise and not called for by the
+              reference templates this stack is based on.
     Properties:
       Name: !Sub "multistate/${PersonName}/${EnvName}/db-master"
       Description: !Sub "multistate DB master credentials, ${EnvName}."
@@ -90,6 +99,12 @@ Resources:
             !ImportValue
               "Fn::Sub": "${NetworkStackName}-AppSgId"
           Description: Postgres from app SG only.
+      # RDS never initiates outbound connections; explicit egress denying
+      # internet-wide traffic avoids the EC2 default allow-all-outbound.
+      SecurityGroupEgress:
+        - IpProtocol: "-1"
+          CidrIp: 127.0.0.1/32
+          Description: No outbound traffic needed; this SG only receives inbound Postgres.
       Tags:
         - {Key: Name, Value: !Sub "multistate-${EnvName}-db-sg"}
         - {Key: env,  Value: sandbox}
@@ -102,6 +117,14 @@ Resources:
     Type: AWS::RDS::DBInstance
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W28
+            reason: >-
+              Explicit identifier required: the Secrets Manager dynamic
+              reference and connection strings need a known, stable
+              endpoint name.
     Properties:
       DBInstanceIdentifier: !Sub "multistate-${PersonName}-${EnvName}"
       Engine: postgres

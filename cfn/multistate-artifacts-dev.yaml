@@ -27,6 +27,14 @@ Resources:
     Type: AWS::S3::Bucket
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W35
+            reason: >-
+              Access logging needs a separate logging-destination bucket,
+              doubling this template's S3 footprint for a training
+              exercise; add in a follow-up if audit logging is required.
     Properties:
       BucketName: !Sub "uptimecrew-multistate-artifacts-${PersonName}-${EnvName}-${AWS::AccountId}"
       VersioningConfiguration:

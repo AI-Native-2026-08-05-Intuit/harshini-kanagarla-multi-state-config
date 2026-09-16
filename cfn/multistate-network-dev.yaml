@@ -37,6 +37,14 @@ Conditions:
 Resources:
   Vpc:
     Type: AWS::EC2::VPC
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W60
+            reason: >-
+              VPC Flow Logs add a CloudWatch Logs group and delivery IAM
+              role, which is out of scope for this exercise's network
+              template; add in a follow-up if traffic auditing is needed.
     Properties:
       CidrBlock: !Ref VpcCidr
       EnableDnsSupport: true
@@ -66,6 +74,14 @@ Resources:
   # template is portable across VpcCidr values without hand-picked octets.
   PublicSubnetA:
     Type: AWS::EC2::Subnet
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W33
+            reason: >-
+              By design: these are the public subnets, meant to auto-assign
+              public IPs; workloads needing no public IP go in the private
+              subnets instead.
     Properties:
       VpcId: !Ref Vpc
       AvailabilityZone: !Select [0, !GetAZs ""]
@@ -77,6 +93,11 @@ Resources:
         - {Key: user, Value: !Ref OwnerTag}
   PublicSubnetB:
     Type: AWS::EC2::Subnet
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W33
+            reason: By design; see PublicSubnetA.
     Properties:
       VpcId: !Ref Vpc
       AvailabilityZone: !Select [1, !GetAZs ""]
@@ -88,6 +109,11 @@ Resources:
         - {Key: user, Value: !Ref OwnerTag}
   PublicSubnetC:
     Type: AWS::EC2::Subnet
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W33
+            reason: By design; see PublicSubnetA.
     Properties:
       VpcId: !Ref Vpc
       AvailabilityZone: !Select [2, !GetAZs ""]
@@ -268,6 +294,18 @@ Resources:
   # 5432 egress is declared on the DB SG in Task 3 instead of here).
   MultistateAppSecurityGroup:
     Type: AWS::EC2::SecurityGroup
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W28
+            reason: >-
+              Explicit name required for operational clarity in the console
+              and for other stacks/scripts that reference it by name.
+          - id: W5
+            reason: >-
+              Port 443 only (not all ports) to the internet is required:
+              ECR, STS, and Secrets Manager have no fixed IPs to pin to
+              without VPC endpoints, which are out of scope for this task.
     Properties:
       GroupName: !Sub "multistate-${PersonName}-${EnvName}-app-sg"
       GroupDescription: App SG; ingress 8080 from VPC only; egress 443 to internet.
