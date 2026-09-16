@@ -54,6 +54,18 @@ jobs:
       - name: cfn-nag
         run: cfn_nag_scan --input-path cfn --output-format txt --fail-on-warnings
 
+      # TEMPORARY debug step -- prints the actual OIDC token claims GitHub
+      # mints for this run, to diagnose an AssumeRoleWithWebIdentity denial
+      # against a trust policy that looks correct on paper. Remove once
+      # resolved; this step reveals no secrets, only the token's own claims.
+      # ACTIONS_ID_TOKEN_REQUEST_TOKEN/URL are populated automatically by
+      # the runner when the job has `permissions: id-token: write` -- no
+      # extra env: mapping needed, they're already in the shell environment.
+      - name: Debug OIDC token claims
+        run: |
+          IDTOKEN=$(curl -sSL -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sts.amazonaws.com" | jq -r '.value')
+          echo "$IDTOKEN" | cut -d '.' -f2 | base64 -d 2>/dev/null | jq '{aud, sub, repository, repository_owner, ref, event_name}' || echo "$IDTOKEN" | cut -d '.' -f2 | base64 -d
+
       # OIDC federation using the bootstrap-stack role (Task 1). This
       # step only succeeds once multistate-bootstrap-harshini-dev has been
       # deployed and multistate-api-cfn-deploy-harshini exists.
