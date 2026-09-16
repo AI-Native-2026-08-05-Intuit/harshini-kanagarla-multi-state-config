@@ -135,9 +135,16 @@ Resources:
               StringEquals:
                 "token.actions.githubusercontent.com:aud": sts.amazonaws.com
               StringLike:
+                # This org's GitHub App/Enterprise config appends internal
+                # numeric entity IDs to org and repo names in the sub claim
+                # (e.g. "repo:org@123/repo@456:pull_request" instead of the
+                # plain "repo:org/repo:pull_request"). Wildcarding around
+                # them keeps the match scoped to this exact org/repo name
+                # without hardcoding IDs that could change if either is
+                # ever recreated.
                 "token.actions.githubusercontent.com:sub":
-                  - !Sub "repo:${GitHubOrg}/${GitHubRepo}:ref:refs/heads/main"
-                  - !Sub "repo:${GitHubOrg}/${GitHubRepo}:pull_request"
+                  - !Sub "repo:${GitHubOrg}*/${GitHubRepo}*:ref:refs/heads/main"
+                  - !Sub "repo:${GitHubOrg}*/${GitHubRepo}*:pull_request"
       Policies:
         - PolicyName: cfn-deploy-narrow
           PolicyDocument:

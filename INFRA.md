@@ -230,6 +230,30 @@ catching a real permission gap before any resource was destroyed, and
 complete demonstration of CloudFormation's safety model than a no-op update
 would have been.
 
+## Deviation: OIDC `sub` claim includes org/repo numeric IDs
+
+`cfn-validate.yml`'s `validate-template` job initially failed
+`sts:AssumeRoleWithWebIdentity` against a trust policy that matched the
+documented GitHub OIDC `sub` format exactly
+(`repo:<org>/<repo>:pull_request`). A temporary debug step
+(`curl $ACTIONS_ID_TOKEN_REQUEST_URL` + decode the JWT payload) revealed
+this org's actual token shape appends internal numeric entity IDs to both
+the org and repo names:
+
+```
+repo:AI-Native-2026-08-05-Intuit@311288174/harshini-kanagarla-multi-state-config@1371511914:pull_request
+```
+
+rather than the plain `repo:AI-Native-2026-08-05-Intuit/harshini-kanagarla-multi-state-config:pull_request`
+every public GitHub OIDC doc describes. Fixed by widening the `StringLike`
+patterns to `repo:${GitHubOrg}*/${GitHubRepo}*:...` — wildcards absorb the
+`@<id>` suffixes without hardcoding IDs that would break if the org or repo
+were ever recreated, while still requiring an exact match on the org and
+repo name themselves as the real security boundary. Verified against the
+actual captured claim with a local `fnmatch` check before deploying, then
+applied via a `Replacement: False` UPDATE change set to the live
+`multistate-api-cfn-deploy-harshini` role.
+
 ## cfn-author Skill audit notes
 
 Running the Skill against a scratch branch and diffing its output against
