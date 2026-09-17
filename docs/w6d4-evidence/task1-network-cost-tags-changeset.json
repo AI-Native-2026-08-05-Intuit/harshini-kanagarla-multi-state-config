@@ -1,0 +1,181 @@
+{
+    "Changes": [
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Modify",
+                "LogicalResourceId": "MultistateAppSecurityGroup",
+                "PhysicalResourceId": "sg-03ca2d034b7130008",
+                "ResourceType": "AWS::EC2::SecurityGroup",
+                "Replacement": "False",
+                "Scope": [
+                    "Metadata"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Metadata",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "DirectModification"
+                    }
+                ]
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Modify",
+                "LogicalResourceId": "NatGatewayA",
+                "PhysicalResourceId": "nat-0e44ec0082d52c0dc",
+                "ResourceType": "AWS::EC2::NatGateway",
+                "Replacement": "False",
+                "Scope": [
+                    "Properties"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "DirectModification"
+                    }
+                ]
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Modify",
+                "LogicalResourceId": "PublicSubnetA",
+                "PhysicalResourceId": "subnet-0899b0234d7cfd978",
+                "ResourceType": "AWS::EC2::Subnet",
+                "Replacement": "False",
+                "Scope": [
+                    "Metadata"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Metadata",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "DirectModification"
+                    }
+                ]
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Modify",
+                "LogicalResourceId": "PublicSubnetB",
+                "PhysicalResourceId": "subnet-0ab0838e9fa4bee66",
+                "ResourceType": "AWS::EC2::Subnet",
+                "Replacement": "False",
+                "Scope": [
+                    "Metadata"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Metadata",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "DirectModification"
+                    }
+                ]
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Modify",
+                "LogicalResourceId": "PublicSubnetC",
+                "PhysicalResourceId": "subnet-063eaaa87e3de7cee",
+                "ResourceType": "AWS::EC2::Subnet",
+                "Replacement": "False",
+                "Scope": [
+                    "Metadata"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Metadata",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "DirectModification"
+                    }
+                ]
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Modify",
+                "LogicalResourceId": "Vpc",
+                "PhysicalResourceId": "vpc-0cdea4bf47f7ba9f1",
+                "ResourceType": "AWS::EC2::VPC",
+                "Replacement": "False",
+                "Scope": [
+                    "Metadata"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Metadata",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "DirectModification"
+                    }
+                ]
+            }
+        }
+    ],
+    "ChangeSetName": "add-cost-tags",
+    "ChangeSetId": "arn:aws:cloudformation:us-east-1:228615803036:changeSet/add-cost-tags/0e932a3d-bfab-4735-85d1-9d70fc5057d4",
+    "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+    "StackName": "multistate-network-harshini-dev",
+    "Description": null,
+    "Parameters": [
+        {
+            "ParameterKey": "PersonName",
+            "ParameterValue": "harshini"
+        },
+        {
+            "ParameterKey": "VpcCidr",
+            "ParameterValue": "10.43.0.0/16"
+        },
+        {
+            "ParameterKey": "OwnerTag",
+            "ParameterValue": "harshini-kanagarla"
+        },
+        {
+            "ParameterKey": "EnvName",
+            "ParameterValue": "dev"
+        }
+    ],
+    "CreationTime": "2026-09-17T07:24:23.204000+00:00",
+    "ExecutionStatus": "AVAILABLE",
+    "Status": "CREATE_COMPLETE",
+    "StatusReason": null,
+    "NotificationARNs": [],
+    "RollbackConfiguration": {},
+    "Capabilities": [],
+    "Tags": null,
+    "ParentChangeSetId": null,
+    "IncludeNestedStacks": false,
+    "RootChangeSetId": null,
+    "OnStackFailure": null,
+    "ImportExistingResources": null,
+    "StackDriftStatus": null,
+    "DeploymentMode": null
+}

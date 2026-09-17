@@ -1,0 +1,82 @@
+{
+    "Changes": [
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Add",
+                "LogicalResourceId": "CostAlarmsTopicPolicy",
+                "ResourceType": "AWS::SNS::TopicPolicy",
+                "Scope": [],
+                "Details": []
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Add",
+                "LogicalResourceId": "CostAlarmsTopic",
+                "ResourceType": "AWS::SNS::Topic",
+                "Scope": [],
+                "Details": []
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Add",
+                "LogicalResourceId": "EstimatedChargesAlarm",
+                "ResourceType": "AWS::CloudWatch::Alarm",
+                "Scope": [],
+                "Details": []
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Add",
+                "LogicalResourceId": "MonthlyCostBudget",
+                "ResourceType": "AWS::Budgets::Budget",
+                "Scope": [],
+                "Details": []
+            }
+        }
+    ],
+    "ChangeSetName": "initial-create",
+    "ChangeSetId": "arn:aws:cloudformation:us-east-1:228615803036:changeSet/initial-create/ffe8903c-1d4f-462e-83c7-6c5fc56d361f",
+    "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-cost-harshini-dev/f28503b0-b274-11f1-b453-0affd8e5d663",
+    "StackName": "multistate-cost-harshini-dev",
+    "Description": null,
+    "Parameters": [
+        {
+            "ParameterKey": "BillingAlarmUsd",
+            "ParameterValue": "120"
+        },
+        {
+            "ParameterKey": "PersonName",
+            "ParameterValue": "harshini"
+        },
+        {
+            "ParameterKey": "MonthlyBudgetUsd",
+            "ParameterValue": "100"
+        },
+        {
+            "ParameterKey": "EnvName",
+            "ParameterValue": "dev"
+        }
+    ],
+    "CreationTime": "2026-09-17T08:51:18.060000+00:00",
+    "ExecutionStatus": "AVAILABLE",
+    "Status": "CREATE_COMPLETE",
+    "StatusReason": null,
+    "NotificationARNs": [],
+    "RollbackConfiguration": {},
+    "Capabilities": [],
+    "Tags": null,
+    "ParentChangeSetId": null,
+    "IncludeNestedStacks": false,
+    "RootChangeSetId": null,
+    "OnStackFailure": null,
+    "ImportExistingResources": null,
+    "StackDriftStatus": null,
+    "DeploymentMode": null
+}

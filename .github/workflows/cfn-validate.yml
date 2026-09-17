@@ -38,7 +38,12 @@ jobs:
           python-version: "3.12"
 
       - name: Install cfn-lint
-        run: pip install cfn-lint==1.10.3
+        # 1.10.3's bundled RDS engine-version allowlist predates Postgres 17
+        # entirely and rejected the live-deployed 17.5 as "not one of
+        # [...16.4]" -- bumped to a release whose allowlist includes 17.x
+        # (matches the deployed multistate-harshini-dev instance's actual
+        # EngineVersion; RDS refuses to downgrade an existing instance).
+        run: pip install cfn-lint==1.56.3
 
       - name: Set up Ruby (for cfn-nag)
         uses: ruby/setup-ruby@a4effe49ee8ee5b8b5091268c473a4628afb5651  # v1.211.0
@@ -85,4 +90,10 @@ jobs:
         run: |
           aws cloudformation validate-template \
             --template-body file://cfn/multistate-artifacts-dev.yaml \
+            --region ${{ env.AWS_REGION }}
+
+      - name: aws cloudformation validate-template (cost)
+        run: |
+          aws cloudformation validate-template \
+            --template-body file://cfn/multistate-cost-dev.yaml \
             --region ${{ env.AWS_REGION }}

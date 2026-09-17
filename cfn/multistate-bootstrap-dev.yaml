@@ -196,6 +196,37 @@ Resources:
                 Action: iam:PassRole
                 Resource:
                   - !Sub "arn:aws:iam::${AWS::AccountId}:role/multistate-*"
+              # W6D4 cost stack: Budgets/SNS/CloudWatch alarms have no
+              # stack-scoped ARN pattern comparable to cloudformation:*, so
+              # these are narrowed by resource name/prefix instead.
+              - Sid: CostStackOps
+                Effect: Allow
+                Action:
+                  - budgets:ViewBudget
+                  - budgets:ModifyBudget
+                  - budgets:DescribeBudgetAction
+                Resource:
+                  - !Sub "arn:aws:budgets::${AWS::AccountId}:budget/multistate-*"
+              - Sid: CostAlarmSnsOps
+                Effect: Allow
+                Action:
+                  - sns:CreateTopic
+                  - sns:DeleteTopic
+                  - sns:GetTopicAttributes
+                  - sns:SetTopicAttributes
+                  - sns:TagResource
+                  - sns:GetSubscriptionAttributes
+                Resource:
+                  - !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:multistate-cost-alarms-*"
+              - Sid: CostBillingAlarmOps
+                Effect: Allow
+                Action:
+                  - cloudwatch:PutMetricAlarm
+                  - cloudwatch:DeleteAlarms
+                  - cloudwatch:DescribeAlarms
+                  - cloudwatch:TagResource
+                Resource:
+                  - !Sub "arn:aws:cloudwatch:${AWS::Region}:${AWS::AccountId}:alarm:multistate/*"
       Tags:
         - {Key: Environment, Value: !Ref EnvName}
         - {Key: env,     Value: sandbox}
