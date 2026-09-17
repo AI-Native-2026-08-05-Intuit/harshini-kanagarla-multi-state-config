@@ -107,6 +107,14 @@ Resources:
   # silence usually means something is broken and should breach).
   EstimatedChargesAlarm:
     Type: AWS::CloudWatch::Alarm
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W28
+            reason: >-
+              Explicit name required: the SNS AlarmActions/OKActions wiring
+              and this stack's own docs/evidence reference a known, stable
+              alarm name rather than a generated one.
     Properties:
       AlarmName: !Sub "multistate/estimated-charges-${PersonName}-${EnvName}"
       AlarmDescription: !Sub "Account-wide EstimatedCharges > ${BillingAlarmUsd} USD."
