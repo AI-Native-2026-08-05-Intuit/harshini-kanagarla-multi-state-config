@@ -1,0 +1,81 @@
+# k8s/aws-authored/cfn/multistate-observability-dev.yaml
+# AUTHOR-ONLY -- never applied to this account. Kept alongside the other
+# author-only manifests (karpenter-nodepool.yaml, adot-collector.yaml,
+# multistate-worker-scaledobject.sqs.yaml) rather than in cfn/ alongside
+# the stacks this account actually deploys (multistate-network-dev.yaml,
+# multistate-app-dev.yaml, multistate-cost-dev.yaml, ...), because an
+# X-Ray SamplingRule with no X-Ray daemon or ADOT collector emitting spans
+# into it (see ../adot-collector.yaml, also author-only) would sit
+# entirely inert -- there is nothing in this dev account for it to sample.
+#
+# Why a SamplingRule at all: the summarizeTenant GraphQL mutation
+# (schema.graphqls) is the one path in this app that costs real money per
+# call (LlmSummaryService -> CostMiddleware -> Anthropic). 100% tracing of
+# every request in the k6 load test's 280-VU steady state
+# (loadtests/multistate-api-p99.js in the app repo) would be a lot of
+# X-Ray ingestion cost for a mostly-uniform workload; this rule samples the
+# cost-plane path at a higher fixed rate than everything else so a cost
+# regression is traceable without paying to trace the read-only
+# GET /api/v1/tenants/{id} path at the same rate.
+AWSTemplateFormatVersion: "2010-09-09"
+Description: multistate X-Ray sampling -- prioritizes the LLM cost-plane path over read traffic.
+
+Parameters:
+  EnvName:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, staging, prod]
+    Description: Deployment environment name (used in resource naming).
+  PersonName:
+    Type: String
+    Default: harshini
+    Description: Short per-person suffix so account-unique resource names don't collide with teammates sharing this sandbox account.
+
+Resources:
+  CostPlaneSamplingRule:
+    Type: AWS::XRay::SamplingRule
+    Properties:
+      SamplingRule:
+        RuleName: !Sub "multistate-cost-plane-${PersonName}-${EnvName}"
+        Priority: 100
+        # /graphql carries every mutation, not just summarizeTenant -- there
+        # is no per-field match in an X-Ray SamplingRule, so this rule is
+        # scoped as tight as the primitive allows (URLPath + POST) and the
+        # ADOT collector's resource processor (adot-collector.yaml) is what
+        # actually tags cost-plane spans for the awsemf/awsxray split
+        # downstream; this rule just makes sure they're captured at all.
+        ServiceName: multistate-api
+        ServiceType: "*"
+        Host: "*"
+        HTTPMethod: POST
+        URLPath: "/graphql"
+        ResourceARN: "*"
+        FixedRate: 0.5
+        ReservoirSize: 5
+        Version: 1
+      Tags:
+        - {Key: app.kubernetes.io/part-of, Value: multistate}
+        - {Key: Environment, Value: !Ref EnvName}
+
+  DefaultSamplingRule:
+    Type: AWS::XRay::SamplingRule
+    Properties:
+      SamplingRule:
+        RuleName: !Sub "multistate-default-${PersonName}-${EnvName}"
+        Priority: 1000
+        ServiceName: multistate-api
+        ServiceType: "*"
+        Host: "*"
+        HTTPMethod: "*"
+        URLPath: "*"
+        ResourceARN: "*"
+        FixedRate: 0.05
+        ReservoirSize: 1
+        Version: 1
+      Tags:
+        - {Key: app.kubernetes.io/part-of, Value: multistate}
+        - {Key: Environment, Value: !Ref EnvName}
+
+Outputs:
+  CostPlaneSamplingRuleName:
+    Value: !Ref CostPlaneSamplingRule
