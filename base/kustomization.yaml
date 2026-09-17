@@ -17,3 +17,5 @@ resources:
   - 50-multistate-api.hpa.yaml
   - 60-multistate-api.ingress.yaml
   - 65-multistate-api.servicemonitor.yaml
+  - multistate-worker.deployment.yaml
+  - multistate-worker-scaledobject.yaml

@@ -1,0 +1,30 @@
+# base/multistate-worker-scaledobject.yaml
+# TASK 1 (RUNNABLE on k3d): KEDA scales the tenants.events worker on
+# Kafka consumer-group lag. lagThreshold: "10" means the generated HPA
+# targets 10 messages of lag per pod; e.g. 73 messages of lag scale to
+# ceil(73/10) = 8 pods -- the same ceil math the Task 4 SQS
+# queueLength variant uses. The dev Kafka broker is plaintext, so no
+# TriggerAuthentication is needed here; the credential-placement
+# discipline (operator IRSA) lives in the SQS variant
+# (k8s/aws-authored/multistate-worker-scaledobject.sqs.yaml, author-only).
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: multistate-worker-scaledobject
+  namespace: multistate-dev
+spec:
+  scaleTargetRef:
+    name: multistate-api-worker
+  minReplicaCount: 0            # scale-to-zero when the topic is drained
+  maxReplicaCount: 28
+  pollingInterval: 15
+  cooldownPeriod:  300
+  triggers:
+    - type: kafka
+      metadata:
+        bootstrapServers: kafka.multistate-dev.svc.cluster.local:9092
+        consumerGroup: multistate-read-model-builder    # the worker's group
+        topic: tenants.events                           # the W3 D3 topic
+        lagThreshold: "10"
+        offsetResetPolicy: latest
