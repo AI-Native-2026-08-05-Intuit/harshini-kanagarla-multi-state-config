@@ -122,6 +122,13 @@ Resources:
             reason: >-
               Explicit name required: GitHub Actions' role-to-assume in
               cfn-validate.yml references this role by a known, stable ARN.
+          - id: W11
+            reason: >-
+              cloudformation:ValidateTemplate does not support resource-
+              level permissions (confirmed via AWS's IAM action reference
+              and by testing scoped-Resource grants returning AccessDenied
+              in cfn-validate.yml); Resource: "*" is the only valid grant
+              for this specific action, isolated to its own statement.
     Properties:
       RoleName: !Sub "multistate-api-cfn-deploy-${PersonName}"
       AssumeRolePolicyDocument:
