@@ -1,0 +1,53 @@
+{
+    "Role": {
+        "Path": "/",
+        "RoleName": "multistate-api-cfn-deploy-harshini",
+        "RoleId": "AROATKOUQKCONFQCOVVYU",
+        "Arn": "arn:aws:iam::228615803036:role/multistate-api-cfn-deploy-harshini",
+        "CreateDate": "2026-09-16T16:27:29+00:00",
+        "AssumeRolePolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": {
+                        "Federated": "arn:aws:iam::228615803036:oidc-provider/token.actions.githubusercontent.com"
+                    },
+                    "Action": "sts:AssumeRoleWithWebIdentity",
+                    "Condition": {
+                        "StringEquals": {
+                            "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+                        },
+                        "StringLike": {
+                            "token.actions.githubusercontent.com:sub": [
+                                "repo:AI-Native-2026-08-05-Intuit/harshini-kanagarla-multi-state:ref:refs/heads/main",
+                                "repo:AI-Native-2026-08-05-Intuit/harshini-kanagarla-multi-state:pull_request"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "Description": "",
+        "MaxSessionDuration": 3600,
+        "Tags": [
+            {
+                "Key": "Environment",
+                "Value": "dev"
+            },
+            {
+                "Key": "Project",
+                "Value": "multistate"
+            },
+            {
+                "Key": "env",
+                "Value": "sandbox"
+            },
+            {
+                "Key": "user",
+                "Value": "harshini-kanagarla"
+            }
+        ],
+        "RoleLastUsed": {}
+    }
+}

@@ -1,0 +1,90 @@
+{
+    "Changes": [
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Modify",
+                "LogicalResourceId": "CfnDeployRole",
+                "PhysicalResourceId": "multistate-api-cfn-deploy-harshini",
+                "ResourceType": "AWS::IAM::Role",
+                "Replacement": "False",
+                "Scope": [
+                    "Properties"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "AssumeRolePolicyDocument",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "ParameterReference",
+                        "CausingEntity": "GitHubRepo"
+                    },
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "AssumeRolePolicyDocument",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Dynamic",
+                        "ChangeSource": "DirectModification"
+                    }
+                ]
+            }
+        }
+    ],
+    "ChangeSetName": "update-github-repo",
+    "ChangeSetId": "arn:aws:cloudformation:us-east-1:228615803036:changeSet/update-github-repo/b39fae53-9ad2-460c-8457-e17c9a731f4c",
+    "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-bootstrap-harshini-dev/42c338f0-b1ea-11f1-a42a-122a1ecf92b5",
+    "StackName": "multistate-bootstrap-harshini-dev",
+    "Description": null,
+    "Parameters": [
+        {
+            "ParameterKey": "PersonName",
+            "ParameterValue": "harshini"
+        },
+        {
+            "ParameterKey": "ExistingBucketName",
+            "ParameterValue": "multi-state-harshini"
+        },
+        {
+            "ParameterKey": "GitHubOrg",
+            "ParameterValue": "AI-Native-2026-08-05-Intuit"
+        },
+        {
+            "ParameterKey": "RetentionDays",
+            "ParameterValue": "30"
+        },
+        {
+            "ParameterKey": "OwnerTag",
+            "ParameterValue": "harshini-kanagarla"
+        },
+        {
+            "ParameterKey": "EnvName",
+            "ParameterValue": "dev"
+        },
+        {
+            "ParameterKey": "GitHubRepo",
+            "ParameterValue": "harshini-kanagarla-multi-state-config"
+        }
+    ],
+    "CreationTime": "2026-09-16T17:47:01.737000+00:00",
+    "ExecutionStatus": "AVAILABLE",
+    "Status": "CREATE_COMPLETE",
+    "StatusReason": null,
+    "NotificationARNs": [],
+    "RollbackConfiguration": {},
+    "Capabilities": [
+        "CAPABILITY_NAMED_IAM"
+    ],
+    "Tags": null,
+    "ParentChangeSetId": null,
+    "IncludeNestedStacks": false,
+    "RootChangeSetId": null,
+    "OnStackFailure": null,
+    "ImportExistingResources": null,
+    "StackDriftStatus": null,
+    "DeploymentMode": null
+}

@@ -1,0 +1,64 @@
+{
+    "StackResources": [
+        {
+            "StackName": "multistate-app-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-app-harshini-dev/6580ee70-b1ed-11f1-bca1-1209b76a853f",
+            "LogicalResourceId": "DbInstance",
+            "PhysicalResourceId": "multistate-harshini-dev",
+            "ResourceType": "AWS::RDS::DBInstance",
+            "Timestamp": "2026-09-16T16:50:12.919000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-app-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-app-harshini-dev/6580ee70-b1ed-11f1-bca1-1209b76a853f",
+            "LogicalResourceId": "DbMasterSecret",
+            "PhysicalResourceId": "arn:aws:secretsmanager:us-east-1:228615803036:secret:multistate/harshini/dev/db-master-NFE1KD",
+            "ResourceType": "AWS::SecretsManager::Secret",
+            "Timestamp": "2026-09-16T16:43:55.399000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-app-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-app-harshini-dev/6580ee70-b1ed-11f1-bca1-1209b76a853f",
+            "LogicalResourceId": "DbSecurityGroup",
+            "PhysicalResourceId": "sg-056f9302a503aabcd",
+            "ResourceType": "AWS::EC2::SecurityGroup",
+            "Timestamp": "2026-09-16T16:44:02.240000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-app-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-app-harshini-dev/6580ee70-b1ed-11f1-bca1-1209b76a853f",
+            "LogicalResourceId": "DbSubnetGroup",
+            "PhysicalResourceId": "multistate-app-harshini-dev-dbsubnetgroup-a3sdvmq1svcd",
+            "ResourceType": "AWS::RDS::DBSubnetGroup",
+            "Timestamp": "2026-09-16T16:43:57.508000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-app-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-app-harshini-dev/6580ee70-b1ed-11f1-bca1-1209b76a853f",
+            "LogicalResourceId": "SecretTargetAttachment",
+            "PhysicalResourceId": "arn:aws:secretsmanager:us-east-1:228615803036:secret:multistate/harshini/dev/db-master-NFE1KD",
+            "ResourceType": "AWS::SecretsManager::SecretTargetAttachment",
+            "Timestamp": "2026-09-16T16:50:14.941000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        }
+    ]
+}

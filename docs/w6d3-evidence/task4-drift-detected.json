@@ -1,0 +1,22 @@
+{
+    "StackResourceDrifts": [
+        {
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-artifacts-harshini-dev/0c9828a0-b1ed-11f1-a8bb-0afffc2e282f",
+            "LogicalResourceId": "MultistateArtifactsBucket",
+            "PhysicalResourceId": "uptimecrew-multistate-artifacts-harshini-dev-228615803036",
+            "ResourceType": "AWS::S3::Bucket",
+            "ExpectedProperties": "{\"PublicAccessBlockConfiguration\":{\"RestrictPublicBuckets\":true,\"BlockPublicPolicy\":true,\"BlockPublicAcls\":true,\"IgnorePublicAcls\":true},\"BucketName\":\"uptimecrew-multistate-artifacts-harshini-dev-228615803036\",\"OwnershipControls\":{\"Rules\":[{\"ObjectOwnership\":\"BucketOwnerEnforced\"}]},\"BucketEncryption\":{\"ServerSideEncryptionConfiguration\":[{\"BucketKeyEnabled\":true,\"ServerSideEncryptionByDefault\":{\"SSEAlgorithm\":\"aws:kms\",\"KMSMasterKeyID\":\"alias/aws/s3\"}}]},\"LifecycleConfiguration\":{\"Rules\":[{\"Status\":\"Enabled\",\"Transitions\":[{\"StorageClass\":\"STANDARD_IA\",\"TransitionInDays\":90},{\"StorageClass\":\"GLACIER_IR\",\"TransitionInDays\":365}],\"Id\":\"tier-to-ia-then-glacier\"},{\"Status\":\"Enabled\",\"NoncurrentVersionExpiration\":{\"NoncurrentDays\":90},\"Id\":\"expire-old-versions\"}]},\"VersioningConfiguration\":{\"Status\":\"Enabled\"},\"Tags\":[{\"Value\":\"dev\",\"Key\":\"Environment\"},{\"Value\":\"sandbox\",\"Key\":\"env\"},{\"Value\":\"harshini-kanagarla\",\"Key\":\"user\"},{\"Value\":\"multistate\",\"Key\":\"Project\"}]}",
+            "ActualProperties": "{\"PublicAccessBlockConfiguration\":{\"BlockPublicAcls\":true,\"BlockPublicPolicy\":true,\"IgnorePublicAcls\":true,\"RestrictPublicBuckets\":true},\"BucketName\":\"uptimecrew-multistate-artifacts-harshini-dev-228615803036\",\"OwnershipControls\":{\"Rules\":[{\"ObjectOwnership\":\"BucketOwnerEnforced\"}]},\"BucketEncryption\":{\"ServerSideEncryptionConfiguration\":[{\"BucketKeyEnabled\":true,\"ServerSideEncryptionByDefault\":{\"KMSMasterKeyID\":\"alias/aws/s3\",\"SSEAlgorithm\":\"aws:kms\"}}]},\"LifecycleConfiguration\":{\"Rules\":[{\"Id\":\"tier-to-ia-then-glacier\",\"Status\":\"Enabled\",\"Transitions\":[{\"StorageClass\":\"STANDARD_IA\",\"TransitionInDays\":90},{\"StorageClass\":\"GLACIER_IR\",\"TransitionInDays\":365}]},{\"Id\":\"expire-old-versions\",\"NoncurrentVersionExpiration\":{\"NoncurrentDays\":90},\"Status\":\"Enabled\"}]},\"VersioningConfiguration\":{\"Status\":\"Enabled\"},\"Tags\":[{\"Key\":\"Project\",\"Value\":\"multistate\"},{\"Key\":\"manual-drift-test\",\"Value\":\"yes\"},{\"Key\":\"Environment\",\"Value\":\"dev\"},{\"Key\":\"env\",\"Value\":\"sandbox\"},{\"Key\":\"user\",\"Value\":\"harshini-kanagarla\"}]}",
+            "PropertyDifferences": [
+                {
+                    "PropertyPath": "/Tags/1",
+                    "ExpectedValue": "null",
+                    "ActualValue": "{\"Key\":\"manual-drift-test\",\"Value\":\"yes\"}",
+                    "DifferenceType": "ADD"
+                }
+            ],
+            "StackResourceDriftStatus": "MODIFIED",
+            "Timestamp": "2026-09-16T17:21:05.770000+00:00"
+        }
+    ]
+}

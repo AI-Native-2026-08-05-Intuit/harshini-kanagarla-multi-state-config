@@ -1,0 +1,54 @@
+[
+    {
+        "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+        "EventId": "38c7c9b0-b1f4-11f1-9b25-123cd72ea047",
+        "StackName": "multistate-network-harshini-dev",
+        "OperationId": "bf5df203-da3c-4372-8003-34245ae0c6cb",
+        "LogicalResourceId": "multistate-network-harshini-dev",
+        "PhysicalResourceId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+        "ResourceType": "AWS::CloudFormation::Stack",
+        "Timestamp": "2026-09-16T17:29:50.771000+00:00",
+        "ResourceStatus": "UPDATE_ROLLBACK_COMPLETE"
+    },
+    {
+        "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+        "EventId": "07006900-b1f4-11f1-a0b8-125e893140cf",
+        "StackName": "multistate-network-harshini-dev",
+        "OperationId": "bf3a45b6-7a38-409b-9c8a-9d9543cccb03",
+        "LogicalResourceId": "multistate-network-harshini-dev",
+        "PhysicalResourceId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+        "ResourceType": "AWS::CloudFormation::Stack",
+        "Timestamp": "2026-09-16T17:28:27.258000+00:00",
+        "ResourceStatus": "UPDATE_ROLLBACK_FAILED",
+        "ResourceStatusReason": "The following resource(s) failed to update: [NatGatewayA]. ",
+        "ClientRequestToken": "d9880bdc-1373-4633-a6e0-17e9f3468459"
+    },
+    {
+        "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+        "EventId": "NatGatewayA-UPDATE_FAILED-2026-09-16T17:28:26.940Z",
+        "StackName": "multistate-network-harshini-dev",
+        "OperationId": "bf3a45b6-7a38-409b-9c8a-9d9543cccb03",
+        "LogicalResourceId": "NatGatewayA",
+        "PhysicalResourceId": "nat-0e44ec0082d52c0dc",
+        "ResourceType": "AWS::EC2::NatGateway",
+        "Timestamp": "2026-09-16T17:28:26.940000+00:00",
+        "ResourceStatus": "UPDATE_FAILED",
+        "ResourceStatusReason": "Resource handler returned message: \"Encountered a permissions error performing a tagging operation, please add required tag permissions. See https://repost.aws/knowledge-center/cloudformation-tagging-permission-error for how to resolve. Resource handler returned message: \"You are not authorized to perform this operation. User: arn:aws:iam::228615803036:user/nagaharshini_kanagarla@intuit.com is not authorized to perform: ec2:DeleteTags on resource: arn:aws:ec2:us-east-1:228615803036:natgateway/nat-0e44ec0082d52c0dc with an explicit deny in a service control policy: arn:aws:organizations::183729561937:policy/o-wxk29mg34e/service_control_policy/p-upmysz2c. \"\" (RequestToken: 5767b63d-d541-cdf7-5f32-c6e8cc1d7be3, HandlerErrorCode: UnauthorizedTaggingOperation)",
+        "ResourceProperties": "{\"AllocationId\":\"eipalloc-0de497d05e2d83851\",\"SubnetId\":\"subnet-0899b0234d7cfd978\",\"Tags\":[{\"Value\":\"multistate-dev-nat-a\",\"Key\":\"Name\"},{\"Value\":\"sandbox\",\"Key\":\"env\"},{\"Value\":\"harshini-kanagarla\",\"Key\":\"user\"}]}",
+        "ClientRequestToken": "d9880bdc-1373-4633-a6e0-17e9f3468459"
+    },
+    {
+        "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1",
+        "EventId": "NatGatewayA-UPDATE_FAILED-2026-09-16T17:28:02.723Z",
+        "StackName": "multistate-network-harshini-dev",
+        "OperationId": "c11ae5e1-d4a3-4901-b4ab-9f27e9269ce4",
+        "LogicalResourceId": "NatGatewayA",
+        "PhysicalResourceId": "nat-0e44ec0082d52c0dc",
+        "ResourceType": "AWS::EC2::NatGateway",
+        "Timestamp": "2026-09-16T17:28:02.723000+00:00",
+        "ResourceStatus": "UPDATE_FAILED",
+        "ResourceStatusReason": "Resource handler returned message: \"Encountered a permissions error performing a tagging operation, please add required tag permissions. See https://repost.aws/knowledge-center/cloudformation-tagging-permission-error for how to resolve. Resource handler returned message: \"You are not authorized to perform this operation. User: arn:aws:iam::228615803036:user/nagaharshini_kanagarla@intuit.com is not authorized to perform: ec2:DeleteTags on resource: arn:aws:ec2:us-east-1:228615803036:natgateway/nat-0e44ec0082d52c0dc with an explicit deny in a service control policy: arn:aws:organizations::183729561937:policy/o-wxk29mg34e/service_control_policy/p-upmysz2c. \"\" (RequestToken: aa6e2c44-2c43-5919-8485-04064eeef9d3, HandlerErrorCode: UnauthorizedTaggingOperation)",
+        "ResourceProperties": "{\"AllocationId\":\"eipalloc-0de497d05e2d83851\",\"SubnetId\":\"subnet-0899b0234d7cfd978\",\"Tags\":[{\"Value\":\"multistate-dev-nat-a\",\"Key\":\"Name\"},{\"Value\":\"sandbox\",\"Key\":\"env\"},{\"Value\":\"harshini-kanagarla-w6d3\",\"Key\":\"user\"}]}",
+        "ClientRequestToken": "d9880bdc-1373-4633-a6e0-17e9f3468459"
+    }
+]

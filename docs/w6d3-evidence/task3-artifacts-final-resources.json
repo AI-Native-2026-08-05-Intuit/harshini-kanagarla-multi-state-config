@@ -1,0 +1,28 @@
+{
+    "StackResources": [
+        {
+            "StackName": "multistate-artifacts-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-artifacts-harshini-dev/0c9828a0-b1ed-11f1-a8bb-0afffc2e282f",
+            "LogicalResourceId": "ArtifactsBucketPolicy",
+            "PhysicalResourceId": "uptimecrew-multistate-artifacts-harshini-dev-228615803036",
+            "ResourceType": "AWS::S3::BucketPolicy",
+            "Timestamp": "2026-09-16T16:38:57.524000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-artifacts-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-artifacts-harshini-dev/0c9828a0-b1ed-11f1-a8bb-0afffc2e282f",
+            "LogicalResourceId": "MultistateArtifactsBucket",
+            "PhysicalResourceId": "uptimecrew-multistate-artifacts-harshini-dev-228615803036",
+            "ResourceType": "AWS::S3::Bucket",
+            "Timestamp": "2026-09-16T16:38:55.023000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        }
+    ]
+}
