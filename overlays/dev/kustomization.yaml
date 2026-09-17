@@ -24,13 +24,11 @@ patches:
         path: /metadata/annotations
         value:
           argocd.argoproj.io/sync-wave: "-1"
-  - target:
-      kind: Deployment
-      name: multistate-api
-    patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 2
+  # W6D5: the static replicas patch that used to live here was removed.
+  # The HPA (base/50-multistate-api.hpa.yaml, minReplicas: 3) now owns
+  # this Deployment's replica count -- a static override here would
+  # sync-war with the HPA on every reconcile (same reasoning as never
+  # setting replicas on the worker Deployment, which KEDA owns).
   - target:
       kind: ConfigMap
       name: multistate-api-config

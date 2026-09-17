@@ -19,3 +19,4 @@ resources:
   - 65-multistate-api.servicemonitor.yaml
   - multistate-worker.deployment.yaml
   - multistate-worker-scaledobject.yaml
+  - pdb.yaml

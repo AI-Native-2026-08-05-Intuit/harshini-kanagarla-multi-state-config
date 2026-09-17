@@ -1,0 +1,14 @@
+# base/pdb.yaml - W6D5: protect the floor.
+# minAvailable matches the HPA's minReplicas (base/50-multistate-api.hpa.yaml)
+# so a voluntary disruption (node drain, Karpenter consolidation) never
+# takes the service below three serving pods.
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: multistate-api-pdb
+  namespace: multistate-dev
+spec:
+  minAvailable: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: multistate-api

@@ -1,36 +1,43 @@
-# manifests/50-multistate-api.hpa.yaml - autoscale on CPU.
-# autoscaling/v2 (NOT v1; v1 is CPU-only and missing the behavior block).
-# Targets 70% of the container's `resources.requests.cpu`. Min 2 keeps
-# availability; max 5 caps blast radius in the lab.
-
+# base/50-multistate-api.hpa.yaml - W6D5: SLO-derived autoscale.
+# autoscaling/v2 on the CUSTOM metric multistate_inflight_requests
+# (via the Prometheus Adapter, prometheus-adapter-values.yaml), NOT
+# CPU. multistate-api is LLM-API-bound: it waits on the network for
+# the Anthropic call, so CPU stays low even as p99 latency climbs
+# under load -- a CPU-only HPA (the W5D3 original) is blind to
+# exactly the saturation this service experiences. averageValue: 7
+# is derived from a single-replica saturation test: ramp one pod
+# until p99 hits the 500ms SLO ceiling; that per-pod in-flight count
+# is the SLO-derived scaling target.
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: multistate-api
+  name: multistate-api-hpa
   namespace: multistate-dev
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind:       Deployment
     name:       multistate-api
-  minReplicas: 2
-  maxReplicas: 5
+  minReplicas: 3
+  maxReplicas: 28
   metrics:
-    - type: Resource
-      resource:
-        name: cpu
+    - type: Pods
+      pods:
+        metric:
+          name: multistate_inflight_requests
         target:
-          type:               Utilization
-          averageUtilization: 70
+          type:         AverageValue
+          averageValue: "7"
   behavior:
     scaleUp:
-      stabilizationWindowSeconds: 0          # react fast on burst
+      stabilizationWindowSeconds: 0          # react immediately to a burst
       policies:
-        - { type: Percent, value: 100, periodSeconds: 15 }
-        - { type: Pods,    value: 2,   periodSeconds: 60 }
+        - { type: Percent, value: 100, periodSeconds: 60 }
       selectPolicy: Max
     scaleDown:
-      stabilizationWindowSeconds: 300        # 5-minute cool-down (anti-flap)
+      # W5D3 callback: outlast a bursty dip before shedding capacity,
+      # rather than the previous CPU HPA's 300s window.
+      stabilizationWindowSeconds: 600
       policies:
         - { type: Percent, value: 25, periodSeconds: 60 }
       selectPolicy: Min
