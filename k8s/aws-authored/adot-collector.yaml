@@ -1,0 +1,72 @@
+# k8s/aws-authored/adot-collector.yaml
+# AUTHOR-ONLY -- never applied to k3d. Not wired into base/kustomization.yaml
+# or any overlay; the ADOT collector CRD (opentelemetrycollectors.opentelemetry.io)
+# isn't installed there and the X-Ray export target below doesn't exist
+# outside a real AWS account.
+#
+# Why this exists alongside the app's own OTel instrumentation: the app
+# (build.gradle's io.opentelemetry.instrumentation:opentelemetry-spring-boot-starter,
+# W3D5) already emits OTLP directly. This collector is the piece that would
+# receive that OTLP stream in an EKS deployment and fan it out to two
+# EKS-only sinks the app itself doesn't otherwise reach: X-Ray (via
+# awsxray exporter, paired with the SamplingRule in
+# cfn/multistate-observability-dev.yaml) and CloudWatch EMF (the same
+# uptimecrew/llmproxy namespace CostLogger already logs into, see
+# src/main/java/com/uptimecrew/multi_state/llm/cost/CostLogger.java in the
+# app repo) -- centralizing the OTLP fan-out here instead of pointing the
+# app at N exporters directly keeps the app's own OTLP config to one
+# endpoint regardless of how many AWS-side sinks consume it.
+apiVersion: opentelemetry.io/v1beta1
+kind: OpenTelemetryCollector
+metadata:
+  name: multistate-adot
+  namespace: multistate-dev
+spec:
+  mode: deployment
+  replicas: 2
+  image: public.ecr.aws/aws-observability/aws-otel-collector:v0.42.0
+  serviceAccount: multistate-adot
+  config:
+    receivers:
+      otlp:
+        protocols:
+          grpc: { endpoint: "0.0.0.0:4317" }
+          http: { endpoint: "0.0.0.0:4318" }
+    processors:
+      batch: {}
+      # Cost-plane spans (LlmSummaryService / CostMiddleware calls, tagged
+      # by the app's CorrelationIdFilter-adjacent instrumentation) get a
+      # resource attribute here so the X-Ray + EMF sinks can both filter on
+      # it without the app needing to know about either sink.
+      resource:
+        attributes:
+          - key: service.namespace
+            value: multistate
+            action: upsert
+    exporters:
+      awsxray:
+        region: us-east-1
+      awsemf:
+        region: us-east-1
+        namespace: uptimecrew/llmproxy
+        log_group_name: /multistate/adot-emf
+      logging:
+        verbosity: normal
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [batch, resource]
+          exporters: [awsxray, logging]
+        metrics:
+          receivers: [otlp]
+          processors: [batch, resource]
+          exporters: [awsemf, logging]
+  # IRSA, not a static access key: the collector's ServiceAccount would be
+  # annotated eks.amazonaws.com/role-arn in a real EKS deployment (same
+  # credential-placement discipline the SQS ScaledObject variant below
+  # documents for TriggerAuthentication) -- no AWS credential ever lives in
+  # this manifest or a mounted Secret.
+  env:
+    - name: AWS_REGION
+      value: us-east-1

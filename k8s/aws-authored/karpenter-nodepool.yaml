@@ -1,0 +1,86 @@
+# k8s/aws-authored/karpenter-nodepool.yaml
+# AUTHOR-ONLY -- never applied to k3d. Not wired into base/kustomization.yaml
+# or any overlay; k3d has no cloud provider, no EC2 instances, and no
+# Karpenter controller, so `kubectl apply -f` here would either no-op on a
+# missing CRD or error outright. This is a design artifact for review, the
+# EKS-native counterpart to the KEDA worker autoscaling in
+# base/multistate-worker-scaledobject.yaml.
+#
+# Why Karpenter here and not Cluster Autoscaler: multistate-api-worker
+# scales 0 -> 28 pods on Kafka lag (base/multistate-worker-scaledobject.yaml)
+# and multistate-api scales 3 -> 28 on the SLO-derived HPA
+# (base/50-multistate-api.hpa.yaml) -- both bursty, both able to drop back
+# to near-zero. Cluster Autoscaler provisions from a fixed set of node
+# groups sized ahead of time; Karpenter provisions the right instance shape
+# on demand from the requirements below and consolidates nodes away the
+# moment pods reschedule, which fits a workload whose replica count swings
+# by an order of magnitude rather than a workload with a flat baseline.
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: multistate-dev
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/part-of: multistate
+    spec:
+      requirements:
+        # Both amd64 and arm64: multistate-api's Dockerfile is already
+        # multi-arch (see docs/w6d4-evidence/ARM64-amd64 platform gap note),
+        # and arm64 (Graviton) instances are meaningfully cheaper per vCPU --
+        # letting Karpenter pick either widens the bin-packing options it has
+        # when consolidating, which is where most of the cost saving comes
+        # from on a bursty workload like this one.
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["amd64", "arm64"]
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["spot", "on-demand"]
+        - key: karpenter.k8s.aws/instance-category
+          operator: In
+          values: ["c", "m"]
+        - key: karpenter.k8s.aws/instance-generation
+          operator: Gt
+          values: ["4"]
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: multistate-dev
+      # Kafka-lag and HPA scale-up need new capacity within seconds, not
+      # minutes -- 30s keeps Karpenter's own decision loop from being the
+      # long pole in front of KEDA's 15s pollingInterval
+      # (base/multistate-worker-scaledobject.yaml).
+      expireAfter: 720h
+  limits:
+    cpu: "64"
+    memory: 256Gi
+  disruption:
+    # WhenEmptyOrUnderutilized (not WhenEmpty): the worker's scale-to-zero
+    # behavior means nodes go idle, not just empty, between Kafka lag
+    # spikes -- consolidation needs to reclaim those too, or the dev
+    # account keeps paying for capacity provisioned for a burst that's over.
+    consolidationPolicy: WhenEmptyOrUnderutilized
+    consolidateAfter: 5m
+---
+# Companion EC2NodeClass -- Karpenter v1 requires one; included here so this
+# file is a complete, reviewable unit rather than a NodePool with a dangling
+# reference. Subnets/security groups are discovered by tag rather than
+# hardcoded ARN, matching this account's existing tag-driven discovery
+# pattern (see cfn/multistate-network-dev.yaml's exports, which this would
+# tag EKS-visible subnets from if this dev account ever grew an EKS cluster).
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: multistate-dev
+spec:
+  amiFamily: AL2023
+  role: KarpenterNodeRole-multistate-dev
+  subnetSelectorTerms:
+    - tags: { karpenter.sh/discovery: multistate-dev }
+  securityGroupSelectorTerms:
+    - tags: { karpenter.sh/discovery: multistate-dev }
+  tags:
+    app.kubernetes.io/part-of: multistate
+    Environment: dev

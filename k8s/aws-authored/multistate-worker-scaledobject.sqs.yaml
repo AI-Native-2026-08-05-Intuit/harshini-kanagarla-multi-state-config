@@ -1,0 +1,53 @@
+# k8s/aws-authored/multistate-worker-scaledobject.sqs.yaml
+# AUTHOR-ONLY -- never applied to k3d. Not wired into base/kustomization.yaml
+# or any overlay. This is the SQS-trigger sibling of the runnable Kafka
+# ScaledObject in base/multistate-worker-scaledobject.yaml, kept in the
+# author-only pack because it targets a queue that doesn't exist outside a
+# real AWS account and needs IRSA to authenticate, which k3d has no
+# equivalent of.
+#
+# Why this exists: the assignment asks the worker's autoscaling story to be
+# defensible against an SQS-backed deployment, not just the Kafka one this
+# dev cluster actually runs. The KEDA trigger config barely changes --
+# queueLength here plays the same role lagThreshold plays for Kafka -- but
+# the auth story is completely different, which is the point of keeping
+# this as a separate file rather than a second trigger block bolted onto
+# the Kafka ScaledObject.
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: multistate-worker-scaledobject-sqs
+  namespace: multistate-dev
+spec:
+  scaleTargetRef:
+    name: multistate-api-worker
+  minReplicaCount: 0
+  maxReplicaCount: 28
+  pollingInterval: 15
+  cooldownPeriod:  300
+  triggers:
+    - type: aws-sqs-queue
+      metadata:
+        queueURL: https://sqs.us-east-1.amazonaws.com/ACCOUNT_ID/multistate-tenant-events
+        queueLength: "10"     # same per-pod-lag budget as the Kafka lagThreshold
+        awsRegion: us-east-1
+        identityOwner: operator
+      authenticationRef:
+        name: multistate-worker-sqs-auth
+---
+# Credential placement: IRSA on the KEDA operator's ServiceAccount, NOT a
+# static AWS access key in a Secret. identityOwner: operator (above) tells
+# KEDA to authenticate as the keda-operator ServiceAccount rather than
+# looking for credentials on this TriggerAuthentication or on the scaled
+# workload itself -- the keda-operator ServiceAccount would carry the
+# eks.amazonaws.com/role-arn annotation, scoped to sqs:ReceiveMessage +
+# sqs:GetQueueAttributes on exactly this queue's ARN, in a real EKS
+# deployment. No AWS credential of any kind lives in this file.
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: multistate-worker-sqs-auth
+  namespace: multistate-dev
+spec:
+  podIdentity:
+    provider: aws-eks
