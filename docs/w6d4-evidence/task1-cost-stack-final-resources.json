@@ -1,0 +1,52 @@
+{
+    "StackResources": [
+        {
+            "StackName": "multistate-cost-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-cost-harshini-dev/f28503b0-b274-11f1-b453-0affd8e5d663",
+            "LogicalResourceId": "CostAlarmsTopic",
+            "PhysicalResourceId": "arn:aws:sns:us-east-1:228615803036:multistate-cost-alarms-harshini-dev",
+            "ResourceType": "AWS::SNS::Topic",
+            "Timestamp": "2026-09-17T08:51:49.841000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-cost-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-cost-harshini-dev/f28503b0-b274-11f1-b453-0affd8e5d663",
+            "LogicalResourceId": "CostAlarmsTopicPolicy",
+            "PhysicalResourceId": "arn:aws:sns:us-east-1:228615803036:multistate-cost-alarms-harshini-dev",
+            "ResourceType": "AWS::SNS::TopicPolicy",
+            "Timestamp": "2026-09-17T08:51:51.249000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-cost-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-cost-harshini-dev/f28503b0-b274-11f1-b453-0affd8e5d663",
+            "LogicalResourceId": "EstimatedChargesAlarm",
+            "PhysicalResourceId": "multistate/estimated-charges-harshini-dev",
+            "ResourceType": "AWS::CloudWatch::Alarm",
+            "Timestamp": "2026-09-17T08:51:53.075000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "multistate-cost-harshini-dev",
+            "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-cost-harshini-dev/f28503b0-b274-11f1-b453-0affd8e5d663",
+            "LogicalResourceId": "MonthlyCostBudget",
+            "PhysicalResourceId": "multistate-monthly-cost-harshini-dev",
+            "ResourceType": "AWS::Budgets::Budget",
+            "Timestamp": "2026-09-17T08:51:51.418000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        }
+    ]
+}

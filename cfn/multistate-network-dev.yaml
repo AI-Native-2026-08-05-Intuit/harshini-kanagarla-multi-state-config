@@ -168,7 +168,11 @@ Resources:
     Properties:
       AllocationId: !GetAtt NatEipA.AllocationId
       SubnetId: !Ref PublicSubnetA
-      Tags: [{Key: Name, Value: !Sub "multistate-${EnvName}-nat-a"}, {Key: env, Value: sandbox}, {Key: user, Value: !Ref OwnerTag}]
+      # Cost-allocation taxonomy (service/env/tenant/feature) drives the
+      # Task 1 cost-dev stack's tag-scoped AWS Budget CostFilters. env
+      # reuses the existing "sandbox" value (this account's SCP-mandated
+      # tag) rather than introducing a second, conflicting "env" meaning.
+      Tags: [{Key: Name, Value: !Sub "multistate-${EnvName}-nat-a"}, {Key: env, Value: sandbox}, {Key: user, Value: !Ref OwnerTag}, {Key: service, Value: multistate}, {Key: tenant, Value: shared}, {Key: feature, Value: summarize-nexus}]
 
   NatEipB:
     Type: AWS::EC2::EIP
@@ -183,7 +187,7 @@ Resources:
     Properties:
       AllocationId: !GetAtt NatEipB.AllocationId
       SubnetId: !Ref PublicSubnetB
-      Tags: [{Key: Name, Value: !Sub "multistate-${EnvName}-nat-b"}, {Key: env, Value: sandbox}, {Key: user, Value: !Ref OwnerTag}]
+      Tags: [{Key: Name, Value: !Sub "multistate-${EnvName}-nat-b"}, {Key: env, Value: sandbox}, {Key: user, Value: !Ref OwnerTag}, {Key: service, Value: multistate}, {Key: tenant, Value: shared}, {Key: feature, Value: summarize-nexus}]
 
   NatEipC:
     Type: AWS::EC2::EIP
@@ -198,7 +202,7 @@ Resources:
     Properties:
       AllocationId: !GetAtt NatEipC.AllocationId
       SubnetId: !Ref PublicSubnetC
-      Tags: [{Key: Name, Value: !Sub "multistate-${EnvName}-nat-c"}, {Key: env, Value: sandbox}, {Key: user, Value: !Ref OwnerTag}]
+      Tags: [{Key: Name, Value: !Sub "multistate-${EnvName}-nat-c"}, {Key: env, Value: sandbox}, {Key: user, Value: !Ref OwnerTag}, {Key: service, Value: multistate}, {Key: tenant, Value: shared}, {Key: feature, Value: summarize-nexus}]
 
   # --- Public route table: 0.0.0.0/0 -> IGW, shared across all 3 public AZs.
   PublicRouteTable:

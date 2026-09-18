@@ -128,12 +128,14 @@ Resources:
     Properties:
       DBInstanceIdentifier: !Sub "multistate-${PersonName}-${EnvName}"
       Engine: postgres
-      # cfn-lint's bundled RDS engine-version allowlist varies by release
-      # and disagrees with itself across versions (one release flagged
-      # 16.4 as deprecated and wanted 17.x; CI's release only allows up to
-      # 16.4 and rejects 17.x). 16.4 satisfies both; verify the current
-      # default via the console's engine version dropdown at deploy time.
-      EngineVersion: "16.4"
+      # Must match the LIVE instance's engine version -- RDS refuses a
+      # downgrade (confirmed: attempting 17.5 -> 16.4 via UPDATE change
+      # set failed with "Cannot upgrade postgres from 17.5 to 16.4").
+      # The template briefly said 16.4 to satisfy CI's older pinned
+      # cfn-lint's RDS-version allowlist (see cfn-validate.yml), but the
+      # actually-deployed instance was already 17.5 by then; 17.5 is the
+      # source of truth here and CI's allowlist is stale, not this value.
+      EngineVersion: "17.5"
       DBInstanceClass: !Ref DbInstanceClass
       AllocatedStorage: "20"
       StorageType: gp3
@@ -156,6 +158,11 @@ Resources:
         - {Key: env,     Value: sandbox}
         - {Key: user,    Value: !Ref OwnerTag}
         - {Key: Project, Value: multistate}
+        # Cost-allocation taxonomy for the Task 1 cost-dev stack's
+        # tag-scoped AWS Budget CostFilters.
+        - {Key: service, Value: multistate}
+        - {Key: tenant,  Value: shared}
+        - {Key: feature, Value: summarize-nexus}
     DependsOn: DbMasterSecret
 
   SecretTargetAttachment:

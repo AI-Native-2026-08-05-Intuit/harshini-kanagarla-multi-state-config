@@ -1,0 +1,128 @@
+{
+    "Changes": [
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Modify",
+                "LogicalResourceId": "DbInstance",
+                "PhysicalResourceId": "multistate-harshini-dev",
+                "ResourceType": "AWS::RDS::DBInstance",
+                "Replacement": "False",
+                "Scope": [
+                    "Metadata",
+                    "Properties"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Metadata",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "DirectModification"
+                    },
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "Tags",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "DirectModification"
+                    }
+                ]
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Modify",
+                "LogicalResourceId": "DbMasterSecret",
+                "PhysicalResourceId": "arn:aws:secretsmanager:us-east-1:228615803036:secret:multistate/harshini/dev/db-master-NFE1KD",
+                "ResourceType": "AWS::SecretsManager::Secret",
+                "Replacement": "False",
+                "Scope": [
+                    "Metadata"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Metadata",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "DirectModification"
+                    }
+                ]
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Modify",
+                "LogicalResourceId": "DbSecurityGroup",
+                "PhysicalResourceId": "sg-056f9302a503aabcd",
+                "ResourceType": "AWS::EC2::SecurityGroup",
+                "Replacement": "False",
+                "Scope": [
+                    "Properties"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "SecurityGroupEgress",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "DirectModification"
+                    }
+                ]
+            }
+        }
+    ],
+    "ChangeSetName": "add-cost-tags-v2",
+    "ChangeSetId": "arn:aws:cloudformation:us-east-1:228615803036:changeSet/add-cost-tags-v2/8ee80e45-e21c-46f5-89d6-880c9aadc17d",
+    "StackId": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-app-harshini-dev/6580ee70-b1ed-11f1-bca1-1209b76a853f",
+    "StackName": "multistate-app-harshini-dev",
+    "Description": null,
+    "Parameters": [
+        {
+            "ParameterKey": "NetworkStackName",
+            "ParameterValue": "multistate-network-harshini-dev"
+        },
+        {
+            "ParameterKey": "PersonName",
+            "ParameterValue": "harshini"
+        },
+        {
+            "ParameterKey": "DbInstanceClass",
+            "ParameterValue": "db.t4g.small"
+        },
+        {
+            "ParameterKey": "OwnerTag",
+            "ParameterValue": "harshini-kanagarla"
+        },
+        {
+            "ParameterKey": "EnvName",
+            "ParameterValue": "dev"
+        }
+    ],
+    "CreationTime": "2026-09-17T08:46:43.189000+00:00",
+    "ExecutionStatus": "AVAILABLE",
+    "Status": "CREATE_COMPLETE",
+    "StatusReason": null,
+    "NotificationARNs": [],
+    "RollbackConfiguration": {},
+    "Capabilities": [
+        "CAPABILITY_NAMED_IAM"
+    ],
+    "Tags": null,
+    "ParentChangeSetId": null,
+    "IncludeNestedStacks": false,
+    "RootChangeSetId": null,
+    "OnStackFailure": null,
+    "ImportExistingResources": null,
+    "StackDriftStatus": null,
+    "DeploymentMode": null
+}

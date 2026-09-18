@@ -1,0 +1,357 @@
+{
+    "ResourceTagMappingList": [
+        {
+            "ResourceARN": "arn:aws:ec2:us-east-1:228615803036:natgateway/nat-0e44ec0082d52c0dc",
+            "Tags": [
+                {
+                    "Key": "aws:cloudformation:stack-name",
+                    "Value": "multistate-network-harshini-dev"
+                },
+                {
+                    "Key": "aws:cloudformation:stack-id",
+                    "Value": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-harshini-dev/3d29e4f0-b1ec-11f1-9f44-0affc6c90bb1"
+                },
+                {
+                    "Key": "feature",
+                    "Value": "summarize-nexus"
+                },
+                {
+                    "Key": "service",
+                    "Value": "multistate"
+                },
+                {
+                    "Key": "aws:cloudformation:logical-id",
+                    "Value": "NatGatewayA"
+                },
+                {
+                    "Key": "env",
+                    "Value": "sandbox"
+                },
+                {
+                    "Key": "user",
+                    "Value": "harshini-kanagarla"
+                },
+                {
+                    "Key": "tenant",
+                    "Value": "shared"
+                },
+                {
+                    "Key": "Name",
+                    "Value": "multistate-dev-nat-a"
+                }
+            ]
+        },
+        {
+            "ResourceARN": "arn:aws:rds:us-east-1:228615803036:db:multistate-dev",
+            "Tags": [
+                {
+                    "Key": "aws:cloudformation:stack-name",
+                    "Value": "multistate-app-dev"
+                },
+                {
+                    "Key": "aws:cloudformation:stack-id",
+                    "Value": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-app-dev/5c453340-b1d7-11f1-9f14-1227ebb09b97"
+                },
+                {
+                    "Key": "feature",
+                    "Value": "summarize-nexus"
+                },
+                {
+                    "Key": "service",
+                    "Value": "multistate"
+                },
+                {
+                    "Key": "aws:cloudformation:logical-id",
+                    "Value": "DbInstance"
+                },
+                {
+                    "Key": "env",
+                    "Value": "sandbox"
+                },
+                {
+                    "Key": "user",
+                    "Value": "tanmay-jain"
+                },
+                {
+                    "Key": "tenant",
+                    "Value": "shared"
+                }
+            ]
+        },
+        {
+            "ResourceARN": "arn:aws:sns:us-east-1:228615803036:multistate-cost-alarms-varun-dev",
+            "Tags": [
+                {
+                    "Key": "aws:cloudformation:stack-name",
+                    "Value": "multistate-cost-varun-dev"
+                },
+                {
+                    "Key": "aws:cloudformation:stack-id",
+                    "Value": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-cost-varun-dev/2d3b5990-b253-11f1-9761-0e72a83c6429"
+                },
+                {
+                    "Key": "feature",
+                    "Value": "summarize-nexus"
+                },
+                {
+                    "Key": "service",
+                    "Value": "multistate"
+                },
+                {
+                    "Key": "aws:cloudformation:logical-id",
+                    "Value": "CostAlarmsTopic"
+                },
+                {
+                    "Key": "costEnv",
+                    "Value": "dev"
+                },
+                {
+                    "Key": "user",
+                    "Value": "varun-shenoy"
+                },
+                {
+                    "Key": "tenant",
+                    "Value": "shared"
+                }
+            ]
+        },
+        {
+            "ResourceARN": "arn:aws:sns:us-east-1:228615803036:multistate-cost-alarms-dev",
+            "Tags": [
+                {
+                    "Key": "aws:cloudformation:stack-name",
+                    "Value": "multistate-cost-dev"
+                },
+                {
+                    "Key": "aws:cloudformation:stack-id",
+                    "Value": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-cost-dev/ea142be0-b259-11f1-a42a-122a1ecf92b5"
+                },
+                {
+                    "Key": "feature",
+                    "Value": "summarize-nexus"
+                },
+                {
+                    "Key": "service",
+                    "Value": "multistate"
+                },
+                {
+                    "Key": "aws:cloudformation:logical-id",
+                    "Value": "CostAlarmsTopic"
+                },
+                {
+                    "Key": "env",
+                    "Value": "dev"
+                },
+                {
+                    "Key": "tenant",
+                    "Value": "shared"
+                }
+            ]
+        },
+        {
+            "ResourceARN": "arn:aws:ec2:us-east-1:228615803036:natgateway/nat-0e4d653e13ce79df1",
+            "Tags": [
+                {
+                    "Key": "aws:cloudformation:stack-name",
+                    "Value": "multistate-network-dev"
+                },
+                {
+                    "Key": "feature",
+                    "Value": "summarize-nexus"
+                },
+                {
+                    "Key": "aws:cloudformation:stack-id",
+                    "Value": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-dev/d96230b0-b1d4-11f1-a58d-0e2723484ce7"
+                },
+                {
+                    "Key": "service",
+                    "Value": "multistate"
+                },
+                {
+                    "Key": "aws:cloudformation:logical-id",
+                    "Value": "NatGatewayA"
+                },
+                {
+                    "Key": "env",
+                    "Value": "sandbox"
+                },
+                {
+                    "Key": "user",
+                    "Value": "tanmay-jain"
+                },
+                {
+                    "Key": "tenant",
+                    "Value": "shared"
+                },
+                {
+                    "Key": "Name",
+                    "Value": "multistate-dev-nat-a"
+                }
+            ]
+        },
+        {
+            "ResourceARN": "arn:aws:sns:us-east-1:228615803036:multistate-cost-alarms-harshini-dev",
+            "Tags": [
+                {
+                    "Key": "aws:cloudformation:stack-name",
+                    "Value": "multistate-cost-harshini-dev"
+                },
+                {
+                    "Key": "aws:cloudformation:stack-id",
+                    "Value": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-cost-harshini-dev/f28503b0-b274-11f1-b453-0affd8e5d663"
+                },
+                {
+                    "Key": "feature",
+                    "Value": "summarize-nexus"
+                },
+                {
+                    "Key": "service",
+                    "Value": "multistate"
+                },
+                {
+                    "Key": "aws:cloudformation:logical-id",
+                    "Value": "CostAlarmsTopic"
+                },
+                {
+                    "Key": "env",
+                    "Value": "sandbox"
+                },
+                {
+                    "Key": "tenant",
+                    "Value": "shared"
+                }
+            ]
+        },
+        {
+            "ResourceARN": "arn:aws:rds:us-east-1:228615803036:db:multistate-harshini-dev",
+            "Tags": [
+                {
+                    "Key": "Project",
+                    "Value": "multistate"
+                },
+                {
+                    "Key": "aws:cloudformation:stack-name",
+                    "Value": "multistate-app-harshini-dev"
+                },
+                {
+                    "Key": "aws:cloudformation:stack-id",
+                    "Value": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-app-harshini-dev/6580ee70-b1ed-11f1-bca1-1209b76a853f"
+                },
+                {
+                    "Key": "feature",
+                    "Value": "summarize-nexus"
+                },
+                {
+                    "Key": "service",
+                    "Value": "multistate"
+                },
+                {
+                    "Key": "Environment",
+                    "Value": "dev"
+                },
+                {
+                    "Key": "aws:cloudformation:logical-id",
+                    "Value": "DbInstance"
+                },
+                {
+                    "Key": "env",
+                    "Value": "sandbox"
+                },
+                {
+                    "Key": "user",
+                    "Value": "harshini-kanagarla"
+                },
+                {
+                    "Key": "tenant",
+                    "Value": "shared"
+                }
+            ]
+        },
+        {
+            "ResourceARN": "arn:aws:rds:us-east-1:228615803036:db:multistate-varun-dev",
+            "Tags": [
+                {
+                    "Key": "aws:cloudformation:stack-name",
+                    "Value": "multistate-app-varun-dev"
+                },
+                {
+                    "Key": "feature",
+                    "Value": "summarize-nexus"
+                },
+                {
+                    "Key": "aws:cloudformation:stack-id",
+                    "Value": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-app-varun-dev/8ad8dfd0-b18d-11f1-9fde-12f8b2c0aaf9"
+                },
+                {
+                    "Key": "service",
+                    "Value": "multistate"
+                },
+                {
+                    "Key": "aws:cloudformation:logical-id",
+                    "Value": "DbInstance"
+                },
+                {
+                    "Key": "env",
+                    "Value": "sandbox"
+                },
+                {
+                    "Key": "costEnv",
+                    "Value": "dev"
+                },
+                {
+                    "Key": "user",
+                    "Value": "varun-shenoy"
+                },
+                {
+                    "Key": "tenant",
+                    "Value": "shared"
+                }
+            ]
+        },
+        {
+            "ResourceARN": "arn:aws:ec2:us-east-1:228615803036:natgateway/nat-0f3a3a40ccb3e3f2a",
+            "Tags": [
+                {
+                    "Key": "aws:cloudformation:stack-name",
+                    "Value": "multistate-network-varun-dev"
+                },
+                {
+                    "Key": "aws:cloudformation:stack-id",
+                    "Value": "arn:aws:cloudformation:us-east-1:228615803036:stack/multistate-network-varun-dev/6905f4f0-b189-11f1-9997-0afff056177d"
+                },
+                {
+                    "Key": "feature",
+                    "Value": "summarize-nexus"
+                },
+                {
+                    "Key": "service",
+                    "Value": "multistate"
+                },
+                {
+                    "Key": "aws:cloudformation:logical-id",
+                    "Value": "NatGatewayA"
+                },
+                {
+                    "Key": "env",
+                    "Value": "sandbox"
+                },
+                {
+                    "Key": "costEnv",
+                    "Value": "dev"
+                },
+                {
+                    "Key": "user",
+                    "Value": "varun-shenoy"
+                },
+                {
+                    "Key": "tenant",
+                    "Value": "shared"
+                },
+                {
+                    "Key": "Name",
+                    "Value": "multistate-varun-dev-nat-a"
+                }
+            ]
+        }
+    ]
+}
