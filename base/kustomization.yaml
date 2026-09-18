@@ -10,6 +10,7 @@ resources:
   - 05-postgres.yaml
   - 06-mongo.yaml
   - 07-kafka.yaml
+  - 08-redis.yaml
   - 10-multistate-api.deployment.yaml
   - 20-multistate-api.service.yaml
   - 30-multistate-api.configmap.yaml

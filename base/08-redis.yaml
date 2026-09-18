@@ -1,0 +1,50 @@
+# base/08-redis.yaml - supporting Redis for local/CI k3d runs.
+# Not one of the multistate-api deliverable objects; needed because
+# spring-boot-starter-cache + spring-boot-starter-data-redis (build.gradle)
+# make TenantController.create and other cached paths depend on a reachable
+# Redis at startup (SPRING_DATA_REDIS_HOST/PORT in
+# 30-multistate-api.configmap.yaml already point at redis.multistate-dev.svc
+# .cluster.local:6379 -- this was a pre-existing gap: the ConfigMap
+# referenced a Service that was never actually deployed here). Ephemeral
+# (no persistent volume), matching 06-mongo.yaml's pattern for the same
+# "supporting dependency, not the deliverable" reasoning.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: multistate-dev
+  labels:
+    app.kubernetes.io/name: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: redis
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          ports:
+            - { name: redis, containerPort: 6379 }
+          readinessProbe:
+            exec: { command: ["redis-cli", "ping"] }
+            periodSeconds: 5
+            failureThreshold: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: multistate-dev
+  labels:
+    app.kubernetes.io/name: redis
+spec:
+  selector:
+    app.kubernetes.io/name: redis
+  ports:
+    - { name: redis, port: 6379, targetPort: redis }
